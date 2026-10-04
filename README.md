@@ -79,6 +79,29 @@ The skill itself is Markdown and one Python script, so on Windows it can be
 tried by copying `skills/docs-techwriter/` into the assistant's skills
 directory by hand. The trigger rule then has to be wired by hand as well.
 
+### macOS: the expected path
+
+Nobody has run the installer on a Mac. What follows is read from `install.sh`
+and partly simulated on Linux: in the `bash:3.2` image — the bash that macOS
+ships — with `uname` answering `Darwin` and a stand-in `brew` that only logs
+its arguments.
+
+1. The skill is copied into each assistant directory found. Simulated: works.
+2. The trigger rule is wired with `python3`. Without `python3` the installer
+   says so and leaves the rule out; the skill then loads only when asked by
+   name.
+3. When `typograf-cli` is wanted and Node.js is missing, the installer offers
+   `brew install node` if Homebrew is there, and runs it only after a "yes"
+   typed at the prompt. Without Homebrew it points at nodejs.org. Both branches
+   were simulated; a real `brew` run was not.
+4. `typograf-cli` goes into `~/.local/share/docs-techwriter/typograf`, linked as
+   `~/.local/bin/typograf`. That directory is not on the default `PATH` of
+   macOS; the installer warns, and check 15 finds the program there anyway.
+
+The simulation found one defect, fixed in 2.2.5: bash 3.2 printed every path as
+`\~/.claude`. Separately, the Russian-file selector in `lexicon.md` used
+`grep -P`, which the BSD `grep` of macOS does not have; it uses `rg` now.
+
 ## Install
 
 ```bash

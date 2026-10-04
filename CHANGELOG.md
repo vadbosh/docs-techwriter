@@ -10,6 +10,20 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.2.5
+
+**macOS, simulated.** The installer was run in the `bash:3.2` image — the bash
+macOS ships — with a stand-in `uname` answering `Darwin` and a stand-in `brew`.
+
+- **Fixed: bash 3.2 printed every path as `\~/.claude`.** `${d/#$HOME/\~}`
+  keeps the backslash before bash 4.3; `install.sh` and `release.sh` use a
+  `tilde` function that works in both.
+- **Fixed: the Russian-file selector in `lexicon.md` used `grep -P`**, which the
+  BSD `grep` of macOS does not have. It uses `rg` now; on seven repositories it
+  picks exactly the files GNU `grep -rlP` picked.
+- Both READMEs describe the expected macOS path step by step, each step marked
+  as read from the code, simulated, or not run.
+
 ## 2.2.4
 
 - **Both READMEs: the platform paragraph says what was tried, not what is

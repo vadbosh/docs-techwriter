@@ -21,6 +21,9 @@ COPIES=0
 # shellcheck disable=SC1091
 [ -f "$SRC/.release.local" ] && . "$SRC/.release.local"
 
+# Not ${d/#$HOME/\~}: bash 3.2 (macOS) keeps the backslash.
+tilde() { case "$1" in "$HOME"*) printf '~%s' "${1#"$HOME"}" ;; *) printf '%s' "$1" ;; esac; }
+
 version() { grep -m1 '^version:' "$SKILL" | sed 's/version: *"//; s/"//'; }
 
 installed_dirs() {
@@ -54,7 +57,7 @@ copies() {
         [ "$iv" = "$v" ] && [ "$same" -eq 1 ] && continue
         [ "$behind" -eq 0 ] && echo "  installed copies behind the source:"
         behind=$((behind + 1))
-        echo "    ${d/#$HOME/\~}  version $iv$([ "$same" -eq 0 ] && echo ", content differs")"
+        echo "    $(tilde "$d")  version $iv$([ "$same" -eq 0 ] && echo ", content differs")"
     done < <(installed_dirs)
 
     if [ "$behind" -gt 0 ]; then
@@ -81,7 +84,7 @@ rule_copies() {
         cmp -s "$r" "$d/docs-techwriter-trigger.md" && continue
         [ "$bad" -eq 0 ] && echo "  rule copies differing from rules/:"
         bad=1
-        echo "    ${d/#$HOME/\~}/docs-techwriter-trigger.md"
+        echo "    $(tilde "$d")/docs-techwriter-trigger.md"
     done
     if [ "$bad" -eq 1 ]; then
         echo "                    ./install.sh refreshes them"
