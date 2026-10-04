@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Install the ru-tech-docs skill and its trigger rule — Linux / macOS.
+# Install the docs-techwriter skill and its trigger rule — Linux / macOS.
 #
 # The skill is Markdown files and nothing else: no binary, no PATH entry, no
 # runtime. Installing it is a copy into each assistant's skills directory, plus
-# the trigger rule (rules/ru-tech-docs-trigger.md) wired into each assistant.
+# the trigger rule (rules/docs-techwriter-trigger.md) wired into each assistant.
 #
 #   ./install.sh                 install into every assistant found
 #   ./install.sh --dry-run       print what would happen, change nothing
@@ -107,7 +107,7 @@ detect_skill_dirs() {
     done
 }
 
-say "── ru-tech-docs ──"
+say "── docs-techwriter ──"
 [ "$DRY_RUN" -eq 1 ] && warn "  dry run — nothing will be written"
 
 found=0
@@ -119,8 +119,8 @@ while read -r dir; do
     # reference page added to the skill and forgotten in this list would be
     # missing from every install with nothing to say so.
     while read -r f; do
-        install_file "$SRC/skills/ru-tech-docs/$f" "$dir/ru-tech-docs/$f"
-    done < <(cd "$SRC/skills/ru-tech-docs" && find . -type f ! -name '*.bak.*' \
+        install_file "$SRC/skills/docs-techwriter/$f" "$dir/docs-techwriter/$f"
+    done < <(cd "$SRC/skills/docs-techwriter" && find . -type f ! -name '*.bak.*' \
              | sed 's|^\./||' | sort)
 done < <(detect_skill_dirs)
 
@@ -136,16 +136,34 @@ rc=0
 while read -r dir; do
     [ -n "$dir" ] || continue
     if [ "$DRY_RUN" -eq 1 ]; then
-        say "  would verify $(tilde "$dir/ru-tech-docs")"
+        say "  would verify $(tilde "$dir/docs-techwriter")"
         continue
     fi
-    if grep -q '^name: ru-tech-docs$' "$dir/ru-tech-docs/SKILL.md" 2>/dev/null; then
-        ok "  ok — $(tilde "$dir/ru-tech-docs")"
+    if grep -q '^name: docs-techwriter$' "$dir/docs-techwriter/SKILL.md" 2>/dev/null; then
+        ok "  ok — $(tilde "$dir/docs-techwriter")"
     else
-        warn "  FAILED — $(tilde "$dir/ru-tech-docs/SKILL.md") is not the ru-tech-docs skill"
+        warn "  FAILED — $(tilde "$dir/docs-techwriter/SKILL.md") is not the docs-techwriter skill"
         rc=1
     fi
 done < <(detect_skill_dirs)
+
+# Before 2.0.0 the skill was called ru-tech-docs. A copy under the old name
+# keeps its own trigger rule, which sends the assistant to a skill that no
+# longer updates. Named here, never removed: deleting is the person's call.
+old=""
+for d in "$HOME/.claude/skills/ru-tech-docs" "$HOME/.config/opencode/skills/ru-tech-docs" \
+         "$HOME/.codex/skills/ru-tech-docs" "$HOME/.claude/rules/ru-tech-docs-trigger.md" \
+         "$HOME/.config/opencode/instructions/ru-tech-docs-trigger.md" \
+         "$HOME/.codex/memories/ru-tech-docs-trigger.md"; do
+    [ -e "$d" ] && old="$old $d"
+done
+if [ -n "$old" ]; then
+    say "── old name ──"
+    warn "  copies of ru-tech-docs (the name before 2.0.0) are still installed:"
+    for d in $old; do warn "    $(tilde "$d")"; done
+    warn "  remove them, and their entries in opencode.json instructions[] and"
+    warn "  ~/.codex/AGENTS.md — two trigger rules would point at two skills"
+fi
 
 # The rule is what makes the skill fire: writing Russian next to English reads
 # as ordinary work and never matches the skill's description on its own.
@@ -175,7 +193,7 @@ fi
 
 # ── typograf-cli: optional, for check 15 ────────────────────────────────────
 TYPOGRAF_VERSION="6.2.1"   # the version the wrapper's rule list was measured on
-TY_PREFIX="${XDG_DATA_HOME:-$HOME/.local/share}/ru-tech-docs/typograf"
+TY_PREFIX="${XDG_DATA_HOME:-$HOME/.local/share}/docs-techwriter/typograf"
 TY_LINK="$HOME/.local/bin/typograf"
 
 os_family() {
@@ -311,5 +329,5 @@ fi
 
 say ""
 say "  In your assistant: write or edit Russian docs as usual — the rule loads"
-say "  the skill. By name: '/ru-tech-docs' or 'сделай RU версию README'."
+say "  the skill. By name: '/docs-techwriter' or 'сделай RU версию README'."
 exit $rc

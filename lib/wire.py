@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Install the ru-tech-docs trigger rule into one assistant.
+"""Install the docs-techwriter trigger rule into one assistant.
 
     wire.py <claude|opencode|codex> --src <repo> [--dry-run]
 
-  claude    ~/.claude/rules/ru-tech-docs-trigger.md
-  opencode  ~/.config/opencode/instructions/ru-tech-docs-trigger.md
+  claude    ~/.claude/rules/docs-techwriter-trigger.md
+  opencode  ~/.config/opencode/instructions/docs-techwriter-trigger.md
             + an entry in opencode.json instructions[]
-  codex     ~/.codex/memories/ru-tech-docs-trigger.md
+  codex     ~/.codex/memories/docs-techwriter-trigger.md
             + an @-reference in ~/.codex/AGENTS.md
 
 Writing the file is not enough for Opencode and Codex: each loads only what its
@@ -23,7 +23,7 @@ import shutil
 import sys
 import time
 
-RULE = "ru-tech-docs-trigger.md"
+RULE = "docs-techwriter-trigger.md"
 H = os.path.expanduser("~")
 STAMP = time.strftime("%Y%m%d-%H%M%S")
 DRY = False

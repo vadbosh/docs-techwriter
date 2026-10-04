@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Release checks for the ru-tech-docs skill.
+# Release checks for the docs-techwriter skill.
 #
 #   ./release.sh check     version ↔ changelog ↔ tag ↔ HEAD ↔ installed copies
 #                          of the skill and of the trigger rule
@@ -12,7 +12,7 @@
 set -uo pipefail
 
 SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SKILL="$SRC/skills/ru-tech-docs/SKILL.md"
+SKILL="$SRC/skills/docs-techwriter/SKILL.md"
 LOG="$SRC/CHANGELOG.md"
 COPIES=0
 
@@ -25,9 +25,9 @@ version() { grep -m1 '^version:' "$SKILL" | sed 's/version: *"//; s/"//'; }
 
 installed_dirs() {
     local d
-    for d in "$HOME/.claude/skills/ru-tech-docs" \
-             "$HOME/.config/opencode/skills/ru-tech-docs" \
-             "$HOME/.codex/skills/ru-tech-docs" \
+    for d in "$HOME/.claude/skills/docs-techwriter" \
+             "$HOME/.config/opencode/skills/docs-techwriter" \
+             "$HOME/.codex/skills/docs-techwriter" \
              ${RU_TECH_DOCS_MIRRORS:-}; do
         [ -f "$d/SKILL.md" ] && printf '%s\n' "$d"
     done
@@ -37,7 +37,7 @@ installed_dirs() {
 # added to the skill and forgotten in a hand-written list would let a copy
 # differ in that file and still be called a match.
 shipped() {
-    (cd "$SRC/skills/ru-tech-docs" && find . -type f ! -name '*.bak.*' \
+    (cd "$SRC/skills/docs-techwriter" && find . -type f ! -name '*.bak.*' \
         | sed 's|^\./||' | sort)
 }
 
@@ -49,7 +49,7 @@ copies() {
         iv="$(grep -m1 '^version:' "$d/SKILL.md" | sed 's/version: *"//; s/"//')"
         same=1
         while read -r f; do
-            cmp -s "$SRC/skills/ru-tech-docs/$f" "$d/$f" || same=0
+            cmp -s "$SRC/skills/docs-techwriter/$f" "$d/$f" || same=0
         done < <(shipped)
         [ "$iv" = "$v" ] && [ "$same" -eq 1 ] && continue
         [ "$behind" -eq 0 ] && echo "  installed copies behind the source:"
@@ -74,14 +74,14 @@ copies() {
 # The rule ships with the skill and drifts on its own: an edit in one
 # assistant's copy changes when the skill fires there and nowhere else.
 rule_copies() {
-    local r="$SRC/rules/ru-tech-docs-trigger.md" d n=0 bad=0
+    local r="$SRC/rules/docs-techwriter-trigger.md" d n=0 bad=0
     for d in "$HOME/.claude/rules" "$HOME/.config/opencode/instructions" "$HOME/.codex/memories"; do
-        [ -f "$d/ru-tech-docs-trigger.md" ] || continue
+        [ -f "$d/docs-techwriter-trigger.md" ] || continue
         n=$((n + 1))
-        cmp -s "$r" "$d/ru-tech-docs-trigger.md" && continue
+        cmp -s "$r" "$d/docs-techwriter-trigger.md" && continue
         [ "$bad" -eq 0 ] && echo "  rule copies differing from rules/:"
         bad=1
-        echo "    ${d/#$HOME/\~}/ru-tech-docs-trigger.md"
+        echo "    ${d/#$HOME/\~}/docs-techwriter-trigger.md"
     done
     if [ "$bad" -eq 1 ]; then
         echo "                    ./install.sh refreshes them"
@@ -106,7 +106,7 @@ shipped_leaks() {
     echo "  shipped files:    nothing local named in them"
 }
 
-shipped_paths() { while read -r f; do printf '%s ' "$SRC/skills/ru-tech-docs/$f"; done < <(shipped); }
+shipped_paths() { while read -r f; do printf '%s ' "$SRC/skills/docs-techwriter/$f"; done < <(shipped); }
 
 check() {
     local v problems=0

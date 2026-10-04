@@ -1,4 +1,4 @@
-# ru-tech-docs
+# docs-techwriter
 
 Скилл для ИИ-ассистентов (Claude Code, Opencode, Codex): пишет русскую версию
 английской технической документации — README, руководства, справку CLI,
@@ -44,7 +44,7 @@
 
 `typograf-cli` — единственная внешняя программа. `install.sh` предлагает её
 поставить, если запущен в терминале, и ставит в
-`~/.local/share/ru-tech-docs/typograf` со ссылкой `~/.local/bin/typograf` —
+`~/.local/share/docs-techwriter/typograf` со ссылкой `~/.local/bin/typograf` —
 через `npm --prefix`, без `sudo`. Если нет Node.js, установщик печатает команду
 системного менеджера пакетов и предлагает её выполнить: `apt-get` (Debian,
 Ubuntu), `dnf` или `yum` (RHEL, Fedora, CentOS), `brew` (macOS). В Linux этой
@@ -67,14 +67,14 @@ NodeSource или nvm.
 ## Установка
 
 ```bash
-git clone <этот репозиторий> && cd ru-tech-docs
+git clone <этот репозиторий> && cd docs-techwriter
 ./install.sh --dry-run    # что будет записано
 ./install.sh
 ```
 
 `install.sh` копирует скилл во все найденные ассистенты (`~/.claude/skills`,
 `~/.config/opencode/skills`, `~/.codex/skills`) и ставит рядом правило-триггер
-`rules/ru-tech-docs-trigger.md`. Без правила скилл не срабатывает: когда русский
+`rules/docs-techwriter-trigger.md`. Без правила скилл не срабатывает: когда русский
 текст пишут вместе с английским, это выглядит как обычная работа и под описание
 скилла не попадает. Opencode и Codex читают правило, только если на него
 ссылается их конфиг, поэтому установщик дописывает запись в `instructions[]`
@@ -89,10 +89,10 @@ git clone <этот репозиторий> && cd ru-tech-docs
 ## Что где лежит
 
 ```
-skills/ru-tech-docs/SKILL.md        порядок работы и ограничители
-skills/ru-tech-docs/references/     lexicon, patterns, checks, en-side
-skills/ru-tech-docs/scripts/        typograf_check.py — проверка 15
-rules/ru-tech-docs-trigger.md       правило, которое загружает скилл
+skills/docs-techwriter/SKILL.md     порядок работы и ограничители
+skills/docs-techwriter/references/  lexicon, patterns, checks, en-side
+skills/docs-techwriter/scripts/     typograf_check.py — проверка 15
+rules/docs-techwriter-trigger.md    правило, которое загружает скилл
 lib/wire.py                         ставит правило в один ассистент
 install.sh, release.sh              установка; проверки выпуска
 tests/                              тесты typograf_check.py

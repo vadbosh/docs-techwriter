@@ -191,7 +191,7 @@ def main(argv):
         return 2
     exe = find_typograf()
     if not exe:
-        print("typograf not found — install it with the ru-tech-docs installer "
+        print("typograf not found — install it with the docs-techwriter installer "
               "(./install.sh --with-typograf) or `npm install -g typograf-cli`; "
               "TYPOGRAF=<path> points at another copy", file=sys.stderr)
         return 2

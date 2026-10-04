@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Tests for skills/ru-tech-docs/scripts/typograf_check.py.
+# Tests for skills/docs-techwriter/scripts/typograf_check.py.
 # Needs typograf (./install.sh --with-typograf); without it, says SKIP and exits 0.
 set -uo pipefail
 SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-W="$SRC/skills/ru-tech-docs/scripts/typograf_check.py"
+W="$SRC/skills/docs-techwriter/scripts/typograf_check.py"
 T="$(mktemp -d)"
 pass=0 fail=0
 

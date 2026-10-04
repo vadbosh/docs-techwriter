@@ -10,6 +10,25 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.0.0
+
+**Breaking: the skill is now `docs-techwriter`**, and so is the repository
+(github.com/vadbosh/docs-techwriter; the old URL redirects). The command is
+`/docs-techwriter`, the trigger rule `rules/docs-techwriter-trigger.md`, the
+typograf prefix `~/.local/share/docs-techwriter/typograf`. The content is that
+of 1.5.2.
+
+Moving from `ru-tech-docs`: install this version, then remove the old copies —
+`install.sh` names any it finds and removes none:
+
+```bash
+rm -r ~/.claude/skills/ru-tech-docs ~/.config/opencode/skills/ru-tech-docs ~/.codex/skills/ru-tech-docs
+rm ~/.claude/rules/ru-tech-docs-trigger.md ~/.config/opencode/instructions/ru-tech-docs-trigger.md \
+   ~/.codex/memories/ru-tech-docs-trigger.md
+# and the line ~/.config/opencode/instructions/ru-tech-docs-trigger.md in opencode.json
+# instructions[], and the @…/ru-tech-docs-trigger.md line in ~/.codex/AGENTS.md
+```
+
 ## 1.5.2
 
 Found by running the installer in containers (Debian 13, Fedora 44,

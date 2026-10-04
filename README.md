@@ -1,4 +1,4 @@
-# ru-tech-docs
+# docs-techwriter
 
 A skill for AI coding assistants (Claude Code, Opencode, Codex) that writes the
 Russian version of English technical documentation — README, manuals, CLI help,
@@ -42,7 +42,7 @@ when the English text is being written or repaired.
 | Node.js 18.19+ or 20.6+ with `npm`, then `typograf-cli` 6.2.1 | check 15: quotes, dashes, spaces | no — the check is skipped without it |
 
 `typograf-cli` is the one external program. `install.sh` offers it on a
-terminal and installs it into `~/.local/share/ru-tech-docs/typograf`, linked as
+terminal and installs it into `~/.local/share/docs-techwriter/typograf`, linked as
 `~/.local/bin/typograf` — `npm --prefix`, no `sudo`. Without Node.js it prints
 the command for the system package manager and offers to run it: `apt-get`
 (Debian, Ubuntu), `dnf` or `yum` (RHEL, Fedora, CentOS), `brew` (macOS). That
@@ -64,14 +64,14 @@ supported** — the installer is a bash script, and on MSYS or Cygwin it skips
 ## Install
 
 ```bash
-git clone <this repository> && cd ru-tech-docs
+git clone <this repository> && cd docs-techwriter
 ./install.sh --dry-run    # what would be written
 ./install.sh
 ```
 
 `install.sh` copies the skill into every assistant it finds
 (`~/.claude/skills`, `~/.config/opencode/skills`, `~/.codex/skills`) and
-installs the trigger rule `rules/ru-tech-docs-trigger.md` beside it. The rule is
+installs the trigger rule `rules/docs-techwriter-trigger.md` beside it. The rule is
 what makes the skill fire: writing Russian next to English reads as ordinary
 work and never matches the skill's description on its own. Opencode and Codex
 read a rule only when their config points at it, so the installer adds the
@@ -86,10 +86,10 @@ entry to `opencode.json` `instructions[]` and the `@`-reference to
 ## Layout
 
 ```
-skills/ru-tech-docs/SKILL.md        the workflow and the guard rails
-skills/ru-tech-docs/references/     lexicon, patterns, checks, en-side
-skills/ru-tech-docs/scripts/        typograf_check.py — check 15
-rules/ru-tech-docs-trigger.md       the rule that loads the skill
+skills/docs-techwriter/SKILL.md     the workflow and the guard rails
+skills/docs-techwriter/references/  lexicon, patterns, checks, en-side
+skills/docs-techwriter/scripts/     typograf_check.py — check 15
+rules/docs-techwriter-trigger.md    the rule that loads the skill
 lib/wire.py                         installs the rule into one assistant
 install.sh, release.sh              install; release checks
 tests/                              tests of typograf_check.py
