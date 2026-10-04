@@ -150,11 +150,14 @@ The hook treats as a document `README*.md`, `CHANGELOG*.md`, `*.RU.md`,
 blocks an edit. It sees only edits made by the assistant's edit tools; an edit
 made with `sed` or a script goes past it.
 
-| Assistant | Installed as | Tested |
-|---|---|---|
-| Claude Code | `PostToolUse` in `~/.claude/settings.json` | in a live session |
-| Codex | `PostToolUse` in `~/.codex/hooks.json` | on synthetic input only |
-| Opencode | plugin `~/.config/opencode/plugins/docs-check.ts` | on synthetic input only |
+| Assistant | Installed as |
+|---|---|
+| Claude Code | `PostToolUse` in `~/.claude/settings.json` |
+| Codex | `PostToolUse` in `~/.codex/hooks.json` |
+| Opencode | plugin `~/.config/opencode/plugins/docs-check.ts` |
+
+The hook was tested in a live session of all three: after an edit, the model
+received its findings.
 
 Codex runs a new hook only after you allow it. At its next start it shows a
 window that lists the new hooks; choose "Trust all and continue" there. If you

@@ -157,11 +157,14 @@ git clone <этот репозиторий> && cd docs-techwriter
 никогда не блокирует. Хук видит только правки, сделанные инструментом
 редактирования ассистента; правку через `sed` или скрипт он пропустит.
 
-| Ассистент | Куда ставится | Проверено |
-|---|---|---|
-| Claude Code | `PostToolUse` в `~/.claude/settings.json` | в живой сессии |
-| Codex | `PostToolUse` в `~/.codex/hooks.json` | только на подставных данных |
-| Opencode | плагин `~/.config/opencode/plugins/docs-check.ts` | только на подставных данных |
+| Ассистент | Куда ставится |
+|---|---|
+| Claude Code | `PostToolUse` в `~/.claude/settings.json` |
+| Codex | `PostToolUse` в `~/.codex/hooks.json` |
+| Opencode | плагин `~/.config/opencode/plugins/docs-check.ts` |
+
+Хук проверен в живой сессии каждого из трёх ассистентов: после правки модель
+получила его находки.
 
 Codex запускает новый хук только после разрешения. При следующем запуске он
 покажет окно со списком новых хуков, и там нужно выбрать «Trust all and

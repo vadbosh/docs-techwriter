@@ -10,6 +10,15 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.5.2
+
+- The hook is now tested in a live session of Codex and Opencode as well, not
+  only on synthetic payloads as 2.5.0 says. Opencode (`opencode run`) and Codex
+  (`codex exec -s workspace-write`, after "Trust all and continue") both
+  returned check 16 and check 18 to the model. Before the trust, Codex did not
+  run the hook at all. The "Tested" column of the README table is gone: it
+  said the same for every row.
+
 ## 2.5.1
 
 - The installer's closing message said "write or edit Russian docs"; it now
