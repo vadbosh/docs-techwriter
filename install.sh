@@ -336,6 +336,10 @@ if ! typograf_step && [ "$TYPOGRAF" = yes ]; then
 fi
 
 say ""
-say "  In your assistant: write or edit Russian docs as usual — the rule loads"
-say "  the skill. By name: '/docs-techwriter' or 'сделай RU версию README'."
+if [ -z "$SKILLS_DIR" ] && [ "$NO_RULE" -eq 0 ]; then
+    say "  In your assistant: write or edit docs, English or Russian, as usual — the"
+    say "  rule loads the skill."
+    [ "$NO_HOOK" -eq 0 ] && say "  After each edit the docs-check hook reports what the greps found."
+fi
+say "  By name: '/docs-techwriter' or 'сделай RU версию README'."
 exit $rc

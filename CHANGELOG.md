@@ -1,7 +1,7 @@
 # Changelog
 
-Versions are the `version:` field in `skills/ru-tech-docs/SKILL.md`, and each is
-tagged at the commit that introduced it.
+Versions are the `version:` field in `skills/docs-techwriter/SKILL.md`, and
+each is tagged at the commit that introduced it.
 
 Releasing, in one commit: bump `version:`, add the section here, commit, then
 `./release.sh tag` and `git push --tags origin`. The tag carries this file's
@@ -9,6 +9,13 @@ section for that version, so `git tag -n99 v1.4.0` answers "what changed"
 without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
+
+## 2.5.1
+
+- The installer's closing message said "write or edit Russian docs"; it now
+  covers English as well, and mentions the docs-check hook unless `--no-hook`
+  or `--no-rule` left it out.
+- The header of this file still named `skills/ru-tech-docs/SKILL.md`.
 
 ## 2.5.0
 
