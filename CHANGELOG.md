@@ -10,6 +10,11 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.2.9
+
+- Both READMEs: the macOS section opens with what it is ("this path is read
+  from `install.sh`") instead of pointing at the text below it.
+
 ## 2.2.8
 
 - Both READMEs: the paragraph on what the macOS simulation found is gone — it

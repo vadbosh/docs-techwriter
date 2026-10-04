@@ -82,8 +82,8 @@ directory by hand. The trigger rule then has to be wired by hand as well.
 
 ### macOS: the expected path
 
-Nobody has run the installer on a Mac. What follows is read from `install.sh`
-and partly simulated on Linux: in the `bash:3.2` image, with `uname` answering
+Nobody has run the installer on a Mac. This path is read from `install.sh`, and
+part of it was simulated on Linux: in the `bash:3.2` image, with `uname` answering
 `Darwin` and a stand-in `brew` that only logs its arguments.
 
 Why 3.2: it is still the system `/bin/bash` of current macOS — `3.2.57` on
