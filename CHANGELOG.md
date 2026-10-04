@@ -10,6 +10,12 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.3.1
+
+- README.RU.md: the sentence about the English reader is Russian now.
+  «Читатель по умолчанию» was a calque of *by default*, followed by a
+  telegraph-style list with no verbs.
+
 ## 2.3.0
 
 Two defects a reader found in this skill's own README, which the skill did not
