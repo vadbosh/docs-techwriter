@@ -69,11 +69,12 @@ the `nodejs:20` module stream there. Ubuntu 22.04's `nodejs` is 12 — too old;
 the installer says so and points at nodejs.org, NodeSource or nvm.
 
 Tried in containers: Debian 13, Fedora 44 and AlmaLinux 9 (the full path, from
-no Node to passing tests). macOS was not tried.
+no Node to passing tests). The installer has not run on a real Mac, only in a
+simulation — see [macOS: the expected path](#macos-the-expected-path).
 
-Written for Linux (Debian/Ubuntu and RHEL-like) and macOS; macOS has its branch
-in the installer but, as said above, has not been tried. Windows was not
-planned for and has not been tried either. The installer is a bash script:
+Written for Linux (Debian/Ubuntu and RHEL-like) and macOS; the macOS branch of
+the installer has run only in a simulation. Windows was not planned for and has
+not been tried even that way. The installer is a bash script:
 under Git Bash or Cygwin it skips `typograf`, and nobody has run the rest there.
 The skill itself is Markdown and one Python script, so on Windows it can be
 tried by copying `skills/docs-techwriter/` into the assistant's skills

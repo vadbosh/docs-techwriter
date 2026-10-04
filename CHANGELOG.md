@@ -10,6 +10,12 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.2.7
+
+- **Both READMEs: macOS is "simulated, not run on a Mac"**, not "not tried" —
+  the simulation of 2.2.5 had made that outdated. "As said above" is a link to
+  the macOS section now.
+
 ## 2.2.6
 
 - **Fixed: on macOS the leak check in `release.sh` would have passed without
