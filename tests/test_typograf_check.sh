@@ -53,6 +53,14 @@ expect "unexpanded glob is an empty list" 1 bad.md 'docs/*.ru.md'
 expect "missing file" 2 missing.md
 TYPOGRAF=/nonexistent expect "typograf cannot run" 2 bad.md
 
+# English mode: a hyphen for a dash and a doubled space are found; straight
+# quotes are not a finding in English Markdown, and an unknown language is refused.
+printf 'Run the script - it checks files.  Then wait.\n' > "$T/en-bad.md"
+printf 'Say "draw the architecture" and run `rg -n "x" -- y`.\n' > "$T/en-clean.md"
+expect "english defects found" 1 --lang en en-bad.md
+expect "english quotes left alone" 0 --lang en en-clean.md
+expect "unknown language refused" 2 --lang xx en-bad.md
+
 # The line numbers must survive masking: the finding is on line 3.
 printf '```\ncode\n```\nЗапусти "x" - сейчас.\n' > "$T/lines.md"
 out="$(cd "$T" && python3 "$W" lines.md 2>&1)"; [ "${out%%$'\n'*}" = "lines.md:4" ] \

@@ -10,6 +10,36 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.2.0
+
+**English documentation is a first-class part of the skill.** Until now the
+skill was described, triggered and mostly written for the Russian version; the
+English side was one condensed page loaded on demand.
+
+- **The trigger fires on English documentation for people** — `README*.md`,
+  `docs/`, manuals, `CHANGELOG.md`, release notes, CLI `--help` — as well as on
+  Russian prose. English text written for a model (`SKILL.md`, rules files,
+  `AGENTS.md`, `CLAUDE.md`) does not trigger it on its own.
+- **`references/en-side.md` holds the English rules**: the Google developer
+  documentation style guide, the Microsoft Writing Style Guide, Write the Docs
+  and the Vale packages for the first two (all read 2026-10-04), next to the
+  existing `sepia` checklist. Every guide rule carries its count on the English
+  READMEs of eight projects, so a rule that found nothing says so.
+- **Structures from real English sentences**: a 63-word chain of clauses, a
+  dangling participle ("Replayed over every reply…, it would have fired"), a
+  garden path, and a category error ("the oldest session is simply the day…")
+  that the Russian version had inherited word for word.
+- **Twelve greps from the Vale packages, each run on those READMEs** before it
+  went in. The contraction check is left out: it found 180 deliberate "do not",
+  a register the projects chose for non-native readers.
+- **`typograf_check.py --lang en`**: English rules, straight quotes left alone.
+  Zero lines on nine English READMEs; a hyphen for a dash and a doubled space
+  are still found. Three new tests.
+- `SKILL.md`, both READMEs and the GitHub description say the skill covers
+  English and Russian. They also stop claiming that every rule comes from a
+  real defect or a study: since 1.5.0 some come from style guides, and the
+  pages now name all three sources.
+
 ## 2.1.0
 
 Real examples, from a review of the `README.RU.md` of eight neighbouring

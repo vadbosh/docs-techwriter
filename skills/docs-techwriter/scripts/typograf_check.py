@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Typography check for Russian Markdown through typograf-cli.
 
-    typograf_check.py [--nbsp] FILE...
+    typograf_check.py [--nbsp] [--lang ru|en] FILE...
 
 Prints every line typograf would change, as `file:line` with the line before
 and after. Exit: 0 nothing to change, 1 lines to change, 2 typograf missing or
@@ -122,7 +122,7 @@ def show(line):
     return line.replace("\u00a0", "⍽")
 
 
-def check(path, exe, rules_off, nbsp):
+def check(path, exe, rules_off, nbsp, locale="ru,en-US"):
     try:
         text = open(path, encoding="utf-8").read()
     except (OSError, UnicodeDecodeError) as exc:
@@ -143,7 +143,7 @@ def check(path, exe, rules_off, nbsp):
     try:
         run = subprocess.run(
             [exe, "--stdin", "--stdin-filename", "paragraphs.json", "--no-color",
-             "-l", "ru,en-US", "-d", rules_off],
+             "-l", locale, "-d", rules_off],
             input=json.dumps(["\n".join(masked[a:b]) for a, b in paras]),
             capture_output=True, text=True)
     except OSError as exc:
@@ -185,9 +185,24 @@ def check(path, exe, rules_off, nbsp):
 
 def main(argv):
     nbsp = "--nbsp" in argv
+    lang = "ru"
+    if "--lang" in argv:
+        i = argv.index("--lang")
+        lang = argv[i + 1] if i + 1 < len(argv) else ""
+        argv = argv[:i] + argv[i + 2:]
+    if lang not in ("ru", "en"):
+        print("--lang takes ru or en", file=sys.stderr)
+        return 2
+    # English text gets English quotes and dashes; Russian text may carry
+    # English words, so it keeps both rule sets.
+    locale = "en-US" if lang == "en" else "ru,en-US"
+    if lang == "en":
+        rules_extra = ",common/punctuation/quote"
+    else:
+        rules_extra = ""
     files = [a for a in argv if a != "--nbsp"]
     if not files:
-        print("usage: typograf_check.py [--nbsp] FILE...", file=sys.stderr)
+        print("usage: typograf_check.py [--nbsp] [--lang ru|en] FILE...", file=sys.stderr)
         return 2
     exe = find_typograf()
     if not exe:
@@ -195,14 +210,14 @@ def main(argv):
               "(./install.sh --with-typograf) or `npm install -g typograf-cli`; "
               "TYPOGRAF=<path> points at another copy", file=sys.stderr)
         return 2
-    rules_off = ALWAYS_OFF if nbsp else f"{ALWAYS_OFF},{NBSP_RULES}"
+    rules_off = (ALWAYS_OFF if nbsp else f"{ALWAYS_OFF},{NBSP_RULES}") + rules_extra
     total, failed = 0, False
     for f in files:
         # An unexpanded glob — `docs/*.ru.md` in a project without docs/ — is
         # an empty list, not a missing file.
         if not os.path.exists(f) and re.search(r"[*?\[]", f):
             continue
-        hits = check(f, exe, rules_off, nbsp)
+        hits = check(f, exe, rules_off, nbsp, locale)
         if hits is None:
             failed = True
         else:

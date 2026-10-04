@@ -1,15 +1,24 @@
 ---
 name: docs-techwriter
-description: Produce the Russian version of English technical documentation — README, manuals, CLI help, release notes, skill files. Use when asked to "переведи доку", "сделай RU версию", "translate the README to Russian", when writing Russian docs alongside English ones, or when reviewing an existing Russian version for calques and unreadable constructions. Covers the lexicon that must not be transliterated, the English structures that have no Russian equivalent, and the mechanical checks that catch drift between the two versions.
-version: "2.1.0"
+description: Write and review technical documentation in Russian and English — README, manuals, CLI help, release notes, changelogs. Covers the English original itself, its Russian version, and a document written in Russian from the start. Use when asked to "переведи доку", "сделай RU версию", "translate the README to Russian", "write the README", "review the docs", when writing Russian and English docs side by side, or when reviewing either version for calques, unreadable constructions and drift between the two. Covers the Russian lexicon that must not be transliterated, the English structures that have no Russian equivalent, the English style rules for a reader whose first language is not English, and the mechanical checks for both.
+version: "2.2.0"
 ---
 
-# Russian technical documentation from English
+# Technical documentation in Russian and English
 
-Rules here come from two places: defects caught by a reader on a real document —
-someone who said "это не по-русски" or "о чём это вообще" — and measured studies
-of how professional editors actually repair machine-written text. The second kind
-carries its source inline. Nothing is invented.
+The skill covers three kinds of work: an **English document** written or
+reviewed on its own, the **Russian version** of an English one, and a
+**Russian document** with no English source. The Russian rules are on this page
+and in `references/lexicon.md` and `references/patterns.md`; the English rules
+are in `references/en-side.md`; `references/checks.md` is shared by both.
+
+Rules here come from three places: defects caught by a reader on a real
+document — someone who said "это не по-русски" or "о чём это вообще"; measured
+studies of how professional editors actually repair machine-written text; and
+published style guides (Google developer documentation, Microsoft Writing Style
+Guide, Microsoft Russian Style Guide). The last two carry their source inline,
+and a guide rule that has not yet caught a real sentence says so. A real defect
+outranks a guide: where they disagree, the document wins.
 
 Two studies are cited repeatedly, both by way of the `sepia` skill:
 
@@ -202,14 +211,20 @@ repository read by non-native speakers, because nothing was lost.
 Ask "does this word carry weight the plainer one would not?" — if no, take the
 plainer one. That applies to the English side of a bilingual repository too.
 
-## The English side, on demand
+## The English side
 
-`references/en-side.md` covers what the English text needs — the ten-point
-checklist, the overrepresented syntax templates, the vocabulary that inflates,
-and the register models suppress. **Load it only when the task touches the
-English text**: writing or reviewing an EN README, manual or release note, or
-repairing an English original before its Russian version is made. On a pure
-EN→RU run it is dead weight and stays closed.
+`references/en-side.md` holds the English rules: what the major style guides
+agree on, the checklist for machine-written prose, the structures that make an
+English sentence hard to read for a non-native reader, and the greps. **Load it
+whenever the task touches the English text** — writing or reviewing an English
+README, manual, CLI help or release note, or repairing an English original
+before its Russian version is made. On a pure EN→RU run, where the English is
+not being changed, it stays closed.
+
+The English workflow is the Russian one without the translation: read the venue
+(step 0), test the meaning of each paragraph (step 2), then one pass per check —
+`en-side.md` for words and structures, `checks.md` for the mechanics, with
+`--lang en` for the typography check.
 
 Worth the detour when the Russian version fights back: a defect in the Russian
 is often a defect inherited from the English, and fixing it upstream is cheaper

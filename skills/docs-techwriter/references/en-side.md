@@ -1,27 +1,83 @@
-# The English side of a bilingual repository
+# English technical documentation
 
-**Load this file only when the task touches the English text** — writing an EN
-README, reviewing an EN manual or release note, or fixing an English original
-before its Russian version is made. On a pure EN→RU run it is dead weight; do
-not open it.
+**Load this file whenever the English text is written or reviewed** — an
+English README, manual, CLI help, changelog or release note, on its own or as
+the original of a Russian version. On a pure EN→RU run, where the English is
+not being changed, it stays closed.
 
-Everything else in this skill is about Russian. This file is the exception, and
-it exists because a bilingual repository has an English side that fails in its
-own way — and because a bad English original produces a bad Russian version no
-matter how well the translation is done.
+The reader is assumed not to be a native speaker of English. That one
+assumption carries most of the rules below: one idea per sentence, the actor
+named, the tense that says what happens, no idiom to decode. A bad English
+original also produces a bad Russian version however well it is translated —
+the defects found in Russian READMEs were often inherited, word for word.
 
-Source: the `sepia` skill (MIT, github.com/Nanako0129/sepia, read at commit
-`94f6dc2`, v0.4.0), condensed to the non-fiction part. Underlying studies:
-LAMP, [arXiv:2409.14509](https://arxiv.org/abs/2409.14509); slop taxonomy,
-Shaib et al., [arXiv:2509.19163](https://arxiv.org/abs/2509.19163). For the full
-treatment — per-genre files for release notes, PR replies, postmortems, tickets
-and articles — go to upstream rather than growing this file.
+Sources, each rule names its own:
 
-The rules in `SKILL.md` govern here too, unchanged: read the venue first, one
-check per pass, collect the defect list before fixing, cut rather than add, a
-single hit is not a verdict, and the whitelist in *What is not evidence*.
+- **Google developer documentation style guide** — developers.google.com/style
+  (highlights, tense, voice, procedures, link text, code in text, word list),
+  and its Vale package, github.com/vale-cli/Google. Read 2026-10-04.
+- **Microsoft Writing Style Guide** — learn.microsoft.com/style-guide (top 10
+  tips, global communications, step-by-step instructions), and
+  github.com/vale-cli/Microsoft. Read 2026-10-04.
+- **Write the Docs** — writethedocs.org/guide/writing/docs-principles.
+- **The `sepia` skill** (MIT, github.com/Nanako0129/sepia, read at commit
+  `94f6dc2`, v0.4.0), condensed to the non-fiction part, with its studies:
+  LAMP, [arXiv:2409.14509](https://arxiv.org/abs/2409.14509); slop taxonomy,
+  Shaib et al., [arXiv:2509.19163](https://arxiv.org/abs/2509.19163).
+- **Real defects** from the English READMEs of eight projects written with this
+  skill (2026-10-04, 2946 lines). Where a guide rule found nothing there, the
+  count says so.
 
-## The checklist
+Where a guide and the project disagree, the project wins (step 0 of
+`SKILL.md`). Measured case: both guides want contractions, and the eight
+READMEs write "do not", "is not", "cannot" 180 times — a deliberate register for
+non-native readers, not a defect.
+
+The rules in `SKILL.md` govern here too, unchanged: read the venue first, test
+the meaning of each paragraph, one check per pass, collect the defect list
+before fixing, cut rather than add, a single hit is not a verdict, and the
+whitelist in *What is not evidence*.
+
+## Structures that break a sentence for a non-native reader
+
+Every row below is a real sentence from those READMEs. Greps found none of
+them; reading did — the same as in Russian.
+
+| Structure | As written | Fix |
+|---|---|---|
+| **A chain of clauses** — dash, semicolon, dash, each adding a thought | "…`safe-env` had carried that rule since the first commit while the redactor beside it had not, and nothing was going to notice — two implementations of one policy drift in silence, which is also why…" (63 words) | One sentence per idea. Google aims under 26 words; check 9 in `checks.md` flags 35 |
+| **A dangling participle** — the opening clause has no subject of its own | "Replayed over every Claude Code reply on the author's machine, **it** would have fired on 53 of 3236" — the hook was not replayed; the replies were | "Replaying every Claude Code reply on the author's machine showed that the hook would have fired on 53 of 3236" |
+| **A garden path** — the first reading is wrong, and the sentence has to be read again | "what caught `zai-sk-…` being read as an OpenAI key was a test asserting that a model name is not a finding, not the pattern that let it through" | "The model name `zai-sk-…` was read as an OpenAI key. A test caught it — one that asserts a model name is not a finding. The pattern itself had let it through" |
+| **A category error** — found only by the meaning test | "Their oldest session is simply the day the IDE was first used" — a session is not a day. The Russian version inherited it word for word | "Their oldest session dates from the day the IDE was first used" |
+
+Microsoft names the cause, for machine translation and non-native readers
+alike: *-ing* and *-ed* words whose subject is not stated, and more than two or
+three clauses joined by *and*, *or*, *but*.
+
+## Rules from the style guides
+
+Each with its count on the eight READMEs. A rule that found nothing there is a
+guide rule only: keep it, but do not argue from it as if it had broken
+something. `—` means the rule has no grep and is checked by reading.
+
+| Rule | Source | Not so | So | Hits |
+|---|---|---|---|---|
+| Present tense for what the program does | Google | "If the file will not run, PowerShell's execution policy is blocking it" | "If the file does not run, …" | 13 `will`, 1 defect (this one); the rest are real future events |
+| No hypothetical *would* for normal behaviour | Google | "The server would then remove you" | "The server removes you" | — |
+| Active voice, actor named; passive only to stress the object or hide an irrelevant actor | Google, Microsoft | "The service is queried, and an acknowledgment is sent" | "Send a query to the service. The server sends an acknowledgment" | 4 `is …ed by`, all legitimate |
+| Lead with the point, not with *there is/are* or *you can* | Microsoft | "There are two ways to configure it" | "Configure it in one of two ways:" | 14, hints |
+| *for example*, *that is* — not *e.g.*, *i.e.*, *etc.* | Google | "e.g. a theme" | "for example, a theme" | 1 |
+| Sentence case headings, no period at the end | Google, Microsoft | "## How To Install It." | "## Install" | 0 |
+| Link text names the target; never *here* or *this page* | Google, Write the Docs | "see [here](docs/install.md)" | "see [Installation](docs/install.md)" | 0 |
+| A procedure opens with a full sentence or an imperative; a single step is a bullet, not "1." | Google | "To customize the buttons:" followed by steps | "To customize the buttons, follow these steps:" | — |
+| Steps are imperative sentences; say where before what | Microsoft | "The Save button should then be clicked" | "In the dialog, select Save" | — |
+| No time-anchored words that rot | Google | "currently", "latest", "as of this writing" | a version and a date | 4, each with a version beside it — legitimate |
+| No double negatives | Google | "A missing path won't prevent you from continuing" | "You can continue without a path" | — |
+| One word per concept, no synonym rotation | Microsoft | "repository… repo… project" for one thing | the same word each time | — |
+| No idioms or cultural references | Microsoft | "out of the box", "a home run" | say what happens | — |
+| *lets you*, not *allows you to*; *because*, not *as* | Google | "allows you to filter" | "lets you filter" | 0 |
+
+## The checklist for machine-written prose
 
 One at a time. A combined pass collapses onto the two most salient defects.
 
@@ -70,6 +126,7 @@ Cumulative, not individual. Count the hits in a section; rewrite when they gathe
 Each of these has a Russian calque that arrives in the translated version —
 «ландшафт», «экосистема», «бесшовный», «важно отметить». The RU table is in
 `lexicon.md`; fixing the English original is the cheaper end of the same defect.
+On the eight READMEs: no hits.
 
 ```bash
 EN=$(rg -l -g '*.md' -g '!*.RU.md' -g '!*.ru.md' -g '!review-*.md' '[A-Za-z]' .)
@@ -82,13 +139,41 @@ solution" are different verdicts, and only the line tells them apart.
 underscore in a name», «navigate to the directory») — a hit there is not a
 finding.
 
+## Greps from the style guides
+
+From the Vale packages for Google and Microsoft. Run them on prose: remove code
+fences and inline code first, or every flag in a command matches. Counts are
+the eight READMEs of 2026-10-04; a high count with no defect means the grep is
+a hint, not a verdict.
+
+```bash
+rg -n -i '\bwill\b' $EN                                          # present tense — 13 hits, 1 defect
+rg -n -i '\b(there is|there are|there were)\b' $EN               # weak opener — 14, hints
+rg -n -iP '\b(e\.g\.|i\.e\.)(?=[\s,;]|$)|\betc\.' $EN            # Latin — 1
+rg -n -i '\b(currently|latest|soon|as of this writing)\b' $EN    # time-anchored — 4, legitimate
+rg -n -iP '\bbest(?! practices?)\b|\bsimplest\b|\bfastest\b|\bguarantees?\b' $EN   # claims — 1
+rg -n -i 'in order to|utilize|make use of|a number of|due to the fact that|prior to|has the ability to|in the event that|whether or not' $EN   # wordiness — 0
+rg -n -i '\b(very|really|quite|extremely|simply|basically|actually|seamlessly)\b' $EN   # adverbs — 14, hints
+rg -n -i '\ballows? you to\b' $EN                                # → lets you — 0
+rg -n -P '^#{1,6} [A-Z][a-z]+( [A-Z][a-z]+){2,}' $EN             # Title Case heading — 0
+rg -n '^#{1,6} .*[a-z0-9]\.\s*$' $EN                             # heading ends in a period — 0
+rg -n -i '\[(here|this page|this link|click here|link)\]\(' $EN  # link text — 0
+rg -n '\b\w+\(s\)' $EN                                           # optional plural "file(s)" — 0
+```
+
+Not used: the contraction check (Google.Contractions, Microsoft.Contractions).
+On these projects it found 180 deliberate "do not" — a register choice, see the
+top of this page. Typography — dashes, doubled spaces, ellipses — is check 15
+in `checks.md`, run with `--lang en`.
+
 ## What models suppress, and you can put back
 
 Instruction-tuned models use these at 13–80% of the human rate. Restore to the
 degree the venue allows — sprinkled, not poured. This is the one place where the
 edit is additive.
 
-- **contractions** — don't, it's, wouldn't
+- **contractions** — don't, it's, wouldn't; unless the project writes "do not"
+  on purpose, as the eight READMEs above do
 - **plain causal connectives** — *because* (used at ~20% of the human rate), *so*.
   Not *thus*, *hence*, *therefore*
 - **discourse particles** — well, anyway, just, actually

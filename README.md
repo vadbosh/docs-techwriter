@@ -1,20 +1,32 @@
 # docs-techwriter
 
-A skill for AI coding assistants (Claude Code, Opencode, Codex) that writes the
-Russian version of English technical documentation — README, manuals, CLI help,
-release notes, skill files — and reviews an existing Russian version for calques
-and sentences nobody would say.
+A skill for AI coding assistants (Claude Code, Opencode, Codex) that writes and
+reviews technical documentation in English and Russian — README, manuals, CLI
+help, release notes, changelogs. Three kinds of work: an English document on its
+own, the Russian version of an English one, and a Russian document with no
+English source.
 
-The one principle: **a good Russian version is not a translation.** It is the
-same content stated the way a Russian technical writer would state it. When a
-phrase resists translation, the skill stops translating and describes the
+For Russian, the one principle: **a good Russian version is not a translation.**
+It is the same content stated the way a Russian technical writer would state it.
+When a phrase resists translation, the skill stops translating and describes the
 mechanism instead.
 
-Every rule comes from one of two places: a defect a reader caught on a real
-document, or a measured study of how professional editors repair
-machine-written text (LAMP, CHI 2025; Shaib et al., 2025). Nothing is invented.
+For English, the reader is assumed not to be a native speaker: one idea per
+sentence, the actor named, no idiom that has to be decoded.
+
+Every rule comes from one of three places, and says which:
+
+- a defect a reader caught on a real document;
+- a measured study of how professional editors repair machine-written text
+  (LAMP, CHI 2025; Shaib et al., 2025);
+- a published style guide: Google developer documentation, Microsoft Writing
+  Style Guide, Microsoft Russian Style Guide.
+
+A rule from a guide that has not yet caught a real sentence is marked as such.
 
 ## What a run does
+
+For a Russian version:
 
 1. Reads 2–3 Russian documents from the same project to take the register from.
 2. Writes the Russian from the meaning of the English, not from its sentences,
@@ -29,8 +41,9 @@ machine-written text (LAMP, CHI 2025; Shaib et al., 2025). Nothing is invented.
 Steps 3–5 run one at a time. A combined pass sees the one or two loudest defects
 and misses the rest.
 
-The English side has a page of its own, `references/en-side.md`, loaded only
-when the English text is being written or repaired.
+For an English document the order is the same, without the translation. Read
+the venue and test the meaning of each paragraph. Then run the English rules in
+`references/en-side.md` and the shared mechanical checks, one pass at a time.
 
 ## Requirements
 
