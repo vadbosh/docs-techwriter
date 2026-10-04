@@ -14,7 +14,7 @@
 #
 # typograf-cli is the one external program the skill uses (check 15, quotes,
 # dashes, spaces). It is optional: asked about on a terminal, skipped otherwise.
-# It goes into ~/.local (npm --prefix, no sudo) and needs Node.js >= 12.20;
+# It goes into ~/.local (npm --prefix, no sudo) and needs Node.js 18.19+ or 20.6+;
 # without Node the installer prints the package-manager command and offers to
 # run it — apt (Debian, Ubuntu), dnf/yum (RHEL, Fedora, CentOS), brew (macOS).
 # Windows is not supported.
@@ -202,7 +202,11 @@ node_install_cmd() {
         # a fresh system or container has empty package lists: install alone
         # fails with "Unable to locate package nodejs" (measured, debian:stable-slim)
         debian) echo "${sudo}apt-get update && ${sudo}apt-get install -y nodejs npm" ;;
-        rhel)   if command -v dnf >/dev/null 2>&1; then echo "${sudo}dnf install -y nodejs npm"
+        # RHEL 8/9 and clones ship Node 16 by default — too old (see node_ok);
+        # their module stream nodejs:20 is new enough. Fedora has no modules.
+        rhel)   if command -v dnf >/dev/null 2>&1 && dnf -q module list nodejs 2>/dev/null | grep -q '^nodejs  *20 '; then
+                    echo "${sudo}dnf module install -y nodejs:20/common"
+                elif command -v dnf >/dev/null 2>&1; then echo "${sudo}dnf install -y nodejs npm"
                 else echo "${sudo}yum install -y nodejs npm"; fi ;;
         macos)  command -v brew >/dev/null 2>&1 && echo "brew install node" ;;
     esac
@@ -218,12 +222,21 @@ confirm() {
     case "$a" in y|Y|yes|д|да) return 0 ;; *) return 1 ;; esac
 }
 
+# typograf-cli 6.2.1 calls import.meta.resolve() synchronously. Measured in
+# node:*-slim images: 18.19.0 and 20.6.0 run it, 18.18.2 and 20.5.1 fail with
+# "import.meta.resolve is not a function"; Node 16 (RHEL 9's default) fails too.
+# The package's own "engines" (>= 14) is wrong. 19.x was not measured — refused.
+NODE_MIN="18.19 or 20.6+"
 node_ok() {
     command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1 || return 1
     local v major minor
     v="$(node --version 2>/dev/null)"; v="${v#v}"
     major="${v%%.*}"; minor="${v#*.}"; minor="${minor%%.*}"
-    [ "${major:-0}" -gt 12 ] || { [ "${major:-0}" -eq 12 ] && [ "${minor:-0}" -ge 20 ]; }
+    case "${major:-0}" in
+        18) [ "${minor:-0}" -ge 19 ] ;;
+        20) [ "${minor:-0}" -ge 6 ] ;;
+        *)  [ "${major:-0}" -ge 21 ] ;;
+    esac
 }
 
 typograf_step() {
@@ -258,11 +271,11 @@ typograf_step() {
     if ! node_ok; then
         cmd="$(node_install_cmd "$fam")"
         if [ -z "$cmd" ]; then
-            warn "  Node.js >= 12.20 with npm is needed. Install it with your package manager"
+            warn "  Node.js $NODE_MIN with npm is needed. Install it with your package manager"
             warn "  (macOS without Homebrew: https://nodejs.org), then re-run ./install.sh --with-typograf"
             return 1
         fi
-        say "  Node.js >= 12.20 with npm is needed:  $cmd"
+        say "  Node.js $NODE_MIN with npm is needed:  $cmd"
         # A system package and sudo: only on a yes typed now, never from a flag.
         if [ ! -t 0 ]; then
             warn "  run it, then ./install.sh --with-typograf"
@@ -272,7 +285,10 @@ typograf_step() {
         read -r a || a=""
         case "$a" in y|Y|yes|д|да) ;; *) say "  skipped — run it, then ./install.sh --with-typograf"; return 0 ;; esac
         sh -c "$cmd" || { warn "  FAILED — $cmd"; return 1; }
-        node_ok || { warn "  Node.js is still missing or older than 12.20"; return 1; }
+        node_ok || {
+            warn "  Node.js $(node --version 2>/dev/null || echo missing) from the package manager is too old ($NODE_MIN needed)."
+            warn "  Newer builds: https://nodejs.org, NodeSource, or nvm; then ./install.sh --with-typograf"
+            return 1; }
     fi
     npm install --prefix "$TY_PREFIX" --no-fund --no-audit --loglevel=error \
         "typograf-cli@$TYPOGRAF_VERSION" >/dev/null || { warn "  FAILED — npm install typograf-cli"; return 1; }

@@ -39,7 +39,7 @@ when the English text is being written or repaired.
 | an assistant: Claude Code, Opencode or Codex | the skill itself | yes |
 | `python3` | the installer wiring the rule; checks 1, 3, 5, 6, 9, 12, 13, 15 | yes |
 | `rg` (ripgrep), `awk` | the greps in checks 2, 4, 7, 14 and in the lexicon | yes |
-| Node.js ≥ 12.20 with `npm`, then `typograf-cli` 6.2.1 | check 15: quotes, dashes, spaces | no — the check is skipped without it |
+| Node.js 18.19+ or 20.6+ with `npm`, then `typograf-cli` 6.2.1 | check 15: quotes, dashes, spaces | no — the check is skipped without it |
 
 `typograf-cli` is the one external program. `install.sh` offers it on a
 terminal and installs it into `~/.local/share/ru-tech-docs/typograf`, linked as
@@ -47,6 +47,15 @@ terminal and installs it into `~/.local/share/ru-tech-docs/typograf`, linked as
 the command for the system package manager and offers to run it: `apt-get`
 (Debian, Ubuntu), `dnf` or `yum` (RHEL, Fedora, CentOS), `brew` (macOS). That
 command needs `sudo` on Linux and runs only on a "yes" typed at the prompt.
+
+The Node minimum is measured, not taken from the package: `typograf-cli` 6.2.1
+declares Node 14, but calls `import.meta.resolve()`, which 18.18 and 20.5 do not
+have. RHEL 8/9 and their clones ship Node 16 by default, so the installer picks
+the `nodejs:20` module stream there. Ubuntu 22.04's `nodejs` is 12 — too old;
+the installer says so and points at nodejs.org, NodeSource or nvm.
+
+Tried in containers: Debian 13, Fedora 44 and AlmaLinux 9 (the full path, from
+no Node to passing tests). macOS was not tried.
 
 Supported: Linux (Debian/Ubuntu and RHEL-like), macOS. **Windows is not
 supported** — the installer is a bash script, and on MSYS or Cygwin it skips

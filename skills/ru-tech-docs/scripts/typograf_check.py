@@ -154,7 +154,10 @@ def check(path, exe, rules_off, nbsp):
         return None
     fixed = list(masked)
     try:
-        for (a, b), para in zip(paras, json.loads(run.stdout), strict=True):
+        out = json.loads(run.stdout)
+        if len(out) != len(paras):   # zip(strict=True) is 3.10+; RHEL 9 has 3.9
+            raise ValueError(f"{len(paras)} paragraphs sent, {len(out)} returned")
+        for (a, b), para in zip(paras, out):
             lines = para.split("\n")
             if len(lines) != b - a:
                 raise ValueError(f"line count of lines {a + 1}–{b} changed")

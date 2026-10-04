@@ -10,6 +10,22 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 1.5.2
+
+Found by running the installer in containers (Debian 13, Fedora 44,
+AlmaLinux 9):
+
+- **The Node minimum was wrong.** `typograf-cli` 6.2.1 declares Node 14 but
+  calls `import.meta.resolve()`; measured in `node:*-slim` images, 18.19.0 and
+  20.6.0 run it, 18.18.2 and 20.5.1 do not. `install.sh` required 12.20 and let
+  AlmaLinux's Node 16 through to a `typograf` that did not start. Now: 18.19+
+  in 18.x, 20.6+ in 20.x, or 21+.
+- **RHEL 8/9 and clones** get the `nodejs:20` module stream instead of the
+  default Node 16. Fedora, which has no modules, keeps `dnf install`.
+- A Node from the package manager that is still too old (Ubuntu 22.04 ships
+  12.22) is reported with where to get a newer one, not installed past.
+- `typograf_check.py` used `zip(strict=True)`, Python 3.10+; RHEL 9 has 3.9.
+
 ## 1.5.1
 
 Repository only; the skill's text is unchanged. `.gitignore` carries the
