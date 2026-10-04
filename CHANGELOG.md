@@ -10,6 +10,11 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.2.8
+
+- Both READMEs: the paragraph on what the macOS simulation found is gone — it
+  repeated the 2.2.5 entry below.
+
 ## 2.2.7
 
 - **Both READMEs: macOS is "simulated, not run on a Mac"**, not "not tried" —

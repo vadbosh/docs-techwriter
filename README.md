@@ -104,10 +104,6 @@ comes first in `PATH` runs it instead; that case is the one tested on Linux.
    `~/.local/bin/typograf`. That directory is not on the default `PATH` of
    macOS; the installer warns, and check 15 finds the program there anyway.
 
-The simulation found one defect, fixed in 2.2.5: bash 3.2 printed every path as
-`\~/.claude`. Separately, the Russian-file selector in `lexicon.md` used
-`grep -P`, which the BSD `grep` of macOS does not have; it uses `rg` now.
-
 ## Install
 
 ```bash
