@@ -10,6 +10,14 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.2.1
+
+- **Check 5 no longer flags a legitimate emoji.** `U+FE0F` after a symbol is
+  part of it («⚠️»); only a selector left alone — at the start of a line or
+  after an ASCII character, as in `>️` — is debris. Before, the restored «⚠️» in
+  jira-op's READMEs showed up as a finding. The selector is printed as `0xfe0f`
+  now, like the other invisible characters.
+
 ## 2.2.0
 
 **English documentation is a first-class part of the skill.** Until now the

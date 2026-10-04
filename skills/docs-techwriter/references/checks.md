@@ -125,14 +125,18 @@ import glob, pathlib
 hidden = {0x00AD, 0x2060, 0xFEFF} | set(range(0x200B, 0x2010))
 for f in glob.glob('*.md') + glob.glob('docs/*.md'):
     s = pathlib.Path(f).read_text(encoding='utf-8')
-    bad = {c for c in s if 0x2E80 < ord(c) < 0xFFFF or ord(c) in hidden}
-    print(f, sorted(hex(ord(c)) if ord(c) in hidden else c for c in bad) or 'чисто')"
+    # U+FE0F belongs to the emoji before it (⚠️); alone after ASCII it is debris
+    bad = {c for i, c in enumerate(s)
+           if ord(c) in hidden or (0x2E80 < ord(c) < 0xFFFF and c != chr(0xFE0F))
+           or (c == chr(0xFE0F) and (i == 0 or ord(s[i-1]) < 0x2000))}
+    print(f, sorted(hex(ord(c)) if ord(c) in hidden or c == chr(0xFE0F) else c for c in bad) or 'чисто')"
 rg -n '[а-яёА-ЯЁ][a-zA-Z]|[a-zA-Z][а-яёА-ЯЁ]' -g '*.md' .    # «сеpвер» с латинской p
 ```
 
 Так нашлись иероглифы `判断`, попавшие в текст из-за опечатки в замене, и
 `0xfe0f` в строке `>️` — от значка «⚠️» в цитате удалили сам знак, а невидимый
-селектор варианта остался. Невидимые символы печатаются кодом: `0x200b` — пробел нулевой ширины, `0xad` —
+селектор варианта остался. Селектор сразу после самого значка — часть эмодзи и
+находкой не считается. Невидимые символы печатаются кодом: `0x200b` — пробел нулевой ширины, `0xad` —
 мягкий перенос; на экране их нет, а поиск по слову с ними не находит слово.
 Смешанное слово выглядит русским и не находится поиском по-русски; совпадение в
 обратных кавычках или в имени вида `IPv6адрес` смотри глазами.
