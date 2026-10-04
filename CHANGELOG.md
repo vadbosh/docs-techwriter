@@ -10,6 +10,14 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.2.4
+
+- **Both READMEs: the platform paragraph says what was tried, not what is
+  "supported".** Windows was not planned for and not tried; the installer
+  skips `typograf` under Git Bash or Cygwin, and the skill can be copied there
+  by hand. macOS was called supported one line after "macOS was not tried"; it
+  is "written for, not tried" now.
+
 ## 2.2.3
 
 - **Both READMEs: Node.js has a row of its own** in the requirements table,
