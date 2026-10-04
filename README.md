@@ -35,10 +35,11 @@ For a Russian version:
    then covers the English and checks that each paragraph still tells the
    reader the same thing to do.
 3. Greps for known calques and канцелярит — `references/lexicon.md`.
-4. Checks fourteen structures that break in Russian — `references/patterns.md`.
-5. Runs fifteen mechanical checks — `references/checks.md`: facts that drifted
+4. Checks fifteen structures that break in Russian — `references/patterns.md`.
+5. Runs seventeen mechanical checks — `references/checks.md`: facts that drifted
    between the versions, links and anchors, real paths leaking into examples,
-   sentence length, HTML entities, typography.
+   sentence length, HTML entities, pointers to a place instead of content,
+   version history retold in a README, typography.
 
 Steps 3–5 run one at a time. A combined pass sees the one or two loudest defects
 and misses the rest.

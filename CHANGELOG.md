@@ -10,6 +10,24 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.3.0
+
+Two defects a reader found in this skill's own README, which the skill did not
+catch because only its mechanical pass had been run on those edits.
+
+- **Check 16, pointers to a place**: «как сказано выше», «Ниже — …», "as said
+  above", "what follows". Only the narrow form: bare «выше»/«ниже»/"above"
+  gave 15 hits on eight neighbouring READMEs, all legitimate. The narrow form
+  finds all four phrases in this README at 2.2.6, and one legitimate
+  cross-reference elsewhere. Pattern 10 gets the two real cases.
+- **Pattern 17 and check 17, a README that retells its changelog** («исправлен
+  в 2.2.5», "fixed in 0.4.1", «с 0.10.0»). The check is a hint: half of its
+  seven hits are legitimate — a version matters when the reader's own install
+  depends on it.
+- `SKILL.md` step 4 says to run the structure pass on every edit of prose,
+  the writer's own included. Counts: fifteen structures under seventeen
+  numbers, seventeen checks.
+
 ## 2.2.10
 
 - Both READMEs: "a rule from a guide that has not caught a real sentence is
