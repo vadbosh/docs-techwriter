@@ -10,6 +10,35 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.5.0
+
+The docs-check hook: the mechanical checks now run by themselves after an edit.
+
+- **Why:** the trigger rule loads the skill, but nothing made the model run
+  the checks. In one session the skill was loaded and only `typograf` and a
+  sentence count were run; the reader found the pointers to a place and the
+  retold changelog.
+- **`scripts/docs_check.py`** reads the edit from the hook payload and runs the
+  greps on the lines that edit wrote, not on the whole file: checks 16–18, the
+  lexicon (calques of meaning, канцелярит, machine formulas), the `en-side.md`
+  word lists, sentence length (30 words RU, 35 EN, list items excluded) and
+  `typograf_check.py`. It always ends by asking for the reading pass against
+  `patterns.md` or `en-side.md`. Exit status is always 0; it never blocks.
+- **A document** is `README*.md`, `CHANGELOG*.md`, `*.RU.md`, `*.en.md`, a
+  `.md` under `docs/`, or a `.md` whose text is mainly Russian. An English
+  `SKILL.md` or rule quoting Russian, `review-*.md` and the skill's own
+  `references/` stay silent. YAML front matter is not checked; check 17 is
+  not applied to a changelog.
+- **Wiring:** Claude Code — `PostToolUse` `Edit|Write|MultiEdit` in
+  `~/.claude/settings.json`; Codex — `PostToolUse` `apply_patch|Edit|Write` in
+  `~/.codex/hooks.json` (Codex asks to trust it at the next start); Opencode —
+  `plugins/opencode/docs-check.ts`, `tool.execute.after`, with `--text`.
+  Idempotent, foreign hooks kept, the file backed up before a change.
+  `install.sh --no-hook` leaves it out; `--no-rule` leaves it out too.
+- **Tested:** Claude Code in a live session; Codex and Opencode on synthetic
+  payloads only. Edits made with `sed` or a script are not seen.
+- `tests/test_docs_check.sh`, 14 cases.
+
 ## 2.4.1
 
 A full structure pass over both READMEs, instead of one sentence at a time.

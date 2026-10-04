@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
-# Install the docs-techwriter skill and its trigger rule — Linux / macOS.
+# Install the docs-techwriter skill, its trigger rule and the docs-check hook —
+# Linux / macOS.
 #
-# The skill is Markdown files and nothing else: no binary, no PATH entry, no
-# runtime. Installing it is a copy into each assistant's skills directory, plus
-# the trigger rule (rules/docs-techwriter-trigger.md) wired into each assistant.
+# The skill is Markdown pages and two Python scripts; nothing goes on PATH.
+# Installing it is a copy into each assistant's skills directory, plus the
+# trigger rule (rules/docs-techwriter-trigger.md) and the docs-check hook, which
+# runs scripts/docs_check.py after every edit of documentation.
 #
 #   ./install.sh                 install into every assistant found
 #   ./install.sh --dry-run       print what would happen, change nothing
-#   ./install.sh --no-rule       the skill only, without the trigger rule
+#   ./install.sh --no-rule       the skill only, without the trigger rule or the hook
+#   ./install.sh --no-hook       the skill and the rule, without the docs-check hook
 #   ./install.sh --skills-dir D  install the skill into D, no rule
 #   ./install.sh --with-typograf install typograf-cli without asking
 #   ./install.sh --no-typograf   never offer it
@@ -30,16 +33,18 @@ STAMP="$(date +%Y%m%d-%H%M%S)"
 
 DRY_RUN=0
 NO_RULE=0
+NO_HOOK=0
 TYPOGRAF=ask
 SKILLS_DIR=""
 while [ $# -gt 0 ]; do
     case "$1" in
         --dry-run)    DRY_RUN=1 ;;
         --no-rule)    NO_RULE=1 ;;
+        --no-hook)    NO_HOOK=1 ;;
         --with-typograf) TYPOGRAF=yes ;;
         --no-typograf)   TYPOGRAF=no ;;
         --skills-dir) SKILLS_DIR="${2:-}"; shift ;;
-        -h|--help)    sed -n '2,27p' "${BASH_SOURCE[0]}" | sed 's/^# \?//'; exit 0 ;;
+        -h|--help)    sed -n '2,28p' "${BASH_SOURCE[0]}" | sed 's/^# \?//'; exit 0 ;;
         *) echo "unknown option: $1" >&2; exit 2 ;;
     esac
     shift
@@ -172,7 +177,7 @@ fi
 # Not with --skills-dir: a custom directory says nothing about which assistant
 # reads it, so there is no configuration to wire.
 if [ -z "$SKILLS_DIR" ] && [ "$NO_RULE" -eq 0 ]; then
-    say "── trigger rule ──"
+    say "── trigger rule and docs-check hook ──"
     if ! command -v python3 >/dev/null 2>&1; then
         warn "  python3 not found — rule not installed; the skill fires only when asked by name"
         rc=1
@@ -180,6 +185,7 @@ if [ -z "$SKILLS_DIR" ] && [ "$NO_RULE" -eq 0 ]; then
         for ide in claude opencode codex; do
             args=("$ide" --src "$SRC")
             [ "$DRY_RUN" -eq 1 ] && args+=(--dry-run)
+            [ "$NO_HOOK" -eq 1 ] && args+=(--no-hook)
             set +e
             python3 "$SRC/lib/wire.py" "${args[@]}"
             wrc=$?

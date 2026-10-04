@@ -133,16 +133,47 @@ to `opencode.json` `instructions[]` and the `@`-reference to
 `--no-typograf` never offers it. Without a terminal and without either flag,
 `typograf` is skipped.
 
+### A check after every edit
+
+The rule loads the skill, but it does not make the model run the checks. So
+`install.sh` also installs a hook. After each edit of a document, the hook runs
+`scripts/docs_check.py` on the lines that edit wrote and returns the findings to
+the model at once. The checks are 16–18, the calques and канцелярит of the
+lexicon, the word lists of `en-side.md`, sentence length, and typography when
+`typograf-cli` is installed. A defect that was already in the file is not
+reported again. At the end the hook always asks the model to read the changed
+paragraphs against `patterns.md`: no word search finds a paragraph that says
+the wrong thing or that nobody needs.
+
+The hook treats as a document `README*.md`, `CHANGELOG*.md`, `*.RU.md`,
+`*.en.md`, any `.md` under `docs/`, and any `.md` with Russian text. It never
+blocks an edit. It sees only edits made by the assistant's edit tools; an edit
+made with `sed` or a script goes past it.
+
+| Assistant | Installed as | Tested |
+|---|---|---|
+| Claude Code | `PostToolUse` in `~/.claude/settings.json` | in a live session |
+| Codex | `PostToolUse` in `~/.codex/hooks.json` | on synthetic input only |
+| Opencode | plugin `~/.config/opencode/plugins/docs-check.ts` | on synthetic input only |
+
+Codex runs a new hook only after you allow it. At its next start it shows a
+window that lists the new hooks; choose "Trust all and continue" there. If you
+choose "Continue without trusting", the hook does not run.
+
+`--no-hook` installs the skill and the rule without the hook. `--no-rule` leaves
+the hook out as well.
+
 ## Layout
 
 ```
 skills/docs-techwriter/SKILL.md     the workflow and the guard rails
 skills/docs-techwriter/references/  lexicon, patterns, checks, en-side
-skills/docs-techwriter/scripts/     typograf_check.py — check 15
+skills/docs-techwriter/scripts/     typograf_check.py — check 15; docs_check.py — the hook
 rules/docs-techwriter-trigger.md    the rule that loads the skill
-lib/wire.py                         installs the rule into one assistant
+plugins/opencode/docs-check.ts      the hook for Opencode
+lib/wire.py                         installs the rule and the hook into one assistant
 install.sh, release.sh              install; release checks
-tests/                              tests of typograf_check.py
+tests/                              tests of typograf_check.py and docs_check.py
 ```
 
 ## Releasing

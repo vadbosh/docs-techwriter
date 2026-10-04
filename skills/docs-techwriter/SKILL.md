@@ -1,7 +1,7 @@
 ---
 name: docs-techwriter
 description: Write and review technical documentation in Russian and English — README, manuals, CLI help, release notes, changelogs. Covers the English original itself, its Russian version, and a document written in Russian from the start. Use when asked to "переведи доку", "сделай RU версию", "translate the README to Russian", "write the README", "review the docs", when writing Russian and English docs side by side, or when reviewing either version for calques, unreadable constructions and drift between the two. Covers the Russian lexicon that must not be transliterated, the English structures that have no Russian equivalent, the English style rules for a reader whose first language is not English, and the mechanical checks for both.
-version: "2.4.1"
+version: "2.5.0"
 ---
 
 # Technical documentation in Russian and English
@@ -104,6 +104,14 @@ describe the mechanism.
    failed.
 
 Steps 3–5 are cheap and catch what re-reading does not.
+
+**The docs-check hook.** `install.sh` wires `scripts/docs_check.py` to run
+after every edit of a document. Its findings arrive as context right after the
+edit: checks 16–18, the lexicon, the `en-side.md` word lists, sentence length
+and typography, on the lines that edit wrote. That covers part of steps
+3 and 5 for those lines, never step 4 — the line it ends with, asking for the
+reading pass, is an instruction, not boilerplate. It sees only edits made with
+the assistant's edit tools; prose edited with `sed` or a script goes unchecked.
 
 **Writing Russian with no English source.** The same skill applies to an original
 Russian document — a manual, a runbook, an RCA written in Russian from the start.
