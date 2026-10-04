@@ -93,10 +93,11 @@ rule_copies() {
 # A machine path inside a shipped file reaches every clone. Three landed in
 # published skills on this machine before anything looked for them.
 # `/home/user` is the placeholder checks.md tells writers to use instead, so
-# it is the one home directory that is not a leak.
+# it is the one home directory that is not a leak. A path continues with a
+# name: "/root/…" in prose describing a pattern is not one.
 shipped_leaks() {
     local hits
-    hits="$(grep -n -P "\Q$HOME\E|/home/(?!user\b)[a-z]|/Users/(?!user\b)[a-z]" $(shipped_paths) 2>/dev/null || true)"
+    hits="$(grep -n -P "\Q$HOME\E/[A-Za-z0-9._-]|/home/(?!user\b)[a-z]|/Users/(?!user\b)[a-z]" $(shipped_paths) 2>/dev/null || true)"
     if [ -n "$hits" ]; then
         echo "  shipped files:    a path of this machine is named in them:"
         echo "$hits" | sed 's/^/    /'

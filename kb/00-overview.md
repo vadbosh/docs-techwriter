@@ -18,6 +18,7 @@
 | what you need | file | kind | updated |
 |---|---|---|---|
 | три страницы ru-tech-docs после аудита: что чинилось и чем проверять | `01-audit-2026-09-18.md` | reference | 2026-10-04 |
+| правило без paths и typograf через обёртку: почему так | `02-trigger-and-typograf.md` | decision | 2026-10-04 |
 
 <!-- kb:end -->
 

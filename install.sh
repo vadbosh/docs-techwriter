@@ -9,6 +9,15 @@
 #   ./install.sh --dry-run       print what would happen, change nothing
 #   ./install.sh --no-rule       the skill only, without the trigger rule
 #   ./install.sh --skills-dir D  install the skill into D, no rule
+#   ./install.sh --with-typograf install typograf-cli without asking
+#   ./install.sh --no-typograf   never offer it
+#
+# typograf-cli is the one external program the skill uses (check 15, quotes,
+# dashes, spaces). It is optional: asked about on a terminal, skipped otherwise.
+# It goes into ~/.local (npm --prefix, no sudo) and needs Node.js >= 12.20;
+# without Node the installer prints the package-manager command and offers to
+# run it — apt (Debian, Ubuntu), dnf/yum (RHEL, Fedora, CentOS), brew (macOS).
+# Windows is not supported.
 #
 # Idempotent: re-running replaces only what changed. A file it overwrites is
 # copied to <file>.bak.<timestamp> ONLY when that content is not already in the
@@ -21,13 +30,16 @@ STAMP="$(date +%Y%m%d-%H%M%S)"
 
 DRY_RUN=0
 NO_RULE=0
+TYPOGRAF=ask
 SKILLS_DIR=""
 while [ $# -gt 0 ]; do
     case "$1" in
         --dry-run)    DRY_RUN=1 ;;
         --no-rule)    NO_RULE=1 ;;
+        --with-typograf) TYPOGRAF=yes ;;
+        --no-typograf)   TYPOGRAF=no ;;
         --skills-dir) SKILLS_DIR="${2:-}"; shift ;;
-        -h|--help)    sed -n '2,17p' "${BASH_SOURCE[0]}" | sed 's/^# \?//'; exit 0 ;;
+        -h|--help)    sed -n '2,27p' "${BASH_SOURCE[0]}" | sed 's/^# \?//'; exit 0 ;;
         *) echo "unknown option: $1" >&2; exit 2 ;;
     esac
     shift
@@ -159,6 +171,126 @@ if [ -z "$SKILLS_DIR" ] && [ "$NO_RULE" -eq 0 ]; then
             esac
         done
     fi
+fi
+
+# ── typograf-cli: optional, for check 15 ────────────────────────────────────
+TYPOGRAF_VERSION="6.2.1"   # the version the wrapper's rule list was measured on
+TY_PREFIX="${XDG_DATA_HOME:-$HOME/.local/share}/ru-tech-docs/typograf"
+TY_LINK="$HOME/.local/bin/typograf"
+
+os_family() {
+    case "$(uname -s)" in
+        Darwin) echo macos ;;
+        MINGW*|MSYS*|CYGWIN*) echo windows ;;
+        Linux)
+            local ids
+            ids=" $( . /etc/os-release 2>/dev/null; echo "${ID:-} ${ID_LIKE:-}" ) "
+            case "$ids" in
+                *" debian "*|*" ubuntu "*) echo debian ;;
+                *" rhel "*|*" fedora "*|*" centos "*) echo rhel ;;
+                *) echo linux ;;
+            esac ;;
+        *) echo other ;;
+    esac
+}
+
+node_install_cmd() {
+    # root needs no sudo, and a container usually has none
+    local sudo="sudo "
+    [ "$(id -u)" -eq 0 ] && sudo=""
+    case "$1" in
+        # a fresh system or container has empty package lists: install alone
+        # fails with "Unable to locate package nodejs" (measured, debian:stable-slim)
+        debian) echo "${sudo}apt-get update && ${sudo}apt-get install -y nodejs npm" ;;
+        rhel)   if command -v dnf >/dev/null 2>&1; then echo "${sudo}dnf install -y nodejs npm"
+                else echo "${sudo}yum install -y nodejs npm"; fi ;;
+        macos)  command -v brew >/dev/null 2>&1 && echo "brew install node" ;;
+    esac
+}
+
+# yes/no from the person; "no" when nobody is there to answer
+confirm() {
+    [ "$TYPOGRAF" = yes ] && return 0
+    [ -t 0 ] || return 1
+    local a
+    printf '%s [y/N] ' "$1"
+    read -r a || return 1
+    case "$a" in y|Y|yes|д|да) return 0 ;; *) return 1 ;; esac
+}
+
+node_ok() {
+    command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1 || return 1
+    local v major minor
+    v="$(node --version 2>/dev/null)"; v="${v#v}"
+    major="${v%%.*}"; minor="${v#*.}"; minor="${minor%%.*}"
+    [ "${major:-0}" -gt 12 ] || { [ "${major:-0}" -eq 12 ] && [ "${minor:-0}" -ge 20 ]; }
+}
+
+typograf_step() {
+    say "── typograf (optional: check 15 — quotes, dashes, spaces) ──"
+    local fam cmd a
+    if command -v typograf >/dev/null 2>&1; then
+        ok "  ok — $(typograf --version 2>/dev/null) at $(tilde "$(command -v typograf)")"
+        return 0
+    fi
+    fam="$(os_family)"
+    if [ "$fam" = windows ]; then
+        warn "  Windows is not supported — check 15 will be skipped"
+        return 0
+    fi
+    if [ "$TYPOGRAF" = no ]; then
+        say "  skipped (--no-typograf) — check 15 will be skipped"
+        return 0
+    fi
+    if [ "$TYPOGRAF" = ask ] && [ ! -t 0 ]; then
+        say "  not installed; skipped without a terminal to ask — ./install.sh --with-typograf"
+        return 0
+    fi
+    if [ "$DRY_RUN" -eq 1 ]; then
+        say "  would offer typograf-cli@$TYPOGRAF_VERSION into $(tilde "$TY_PREFIX"), linked as $(tilde "$TY_LINK")"
+        node_ok || say "  would first offer Node.js: ${cmd:-$(node_install_cmd "$fam")}"
+        return 0
+    fi
+    confirm "  Install typograf-cli $TYPOGRAF_VERSION into $(tilde "$TY_PREFIX") (Node.js, no sudo)?" || {
+        say "  skipped — check 15 will be skipped; ./install.sh --with-typograf later"
+        return 0
+    }
+    if ! node_ok; then
+        cmd="$(node_install_cmd "$fam")"
+        if [ -z "$cmd" ]; then
+            warn "  Node.js >= 12.20 with npm is needed. Install it with your package manager"
+            warn "  (macOS without Homebrew: https://nodejs.org), then re-run ./install.sh --with-typograf"
+            return 1
+        fi
+        say "  Node.js >= 12.20 with npm is needed:  $cmd"
+        # A system package and sudo: only on a yes typed now, never from a flag.
+        if [ ! -t 0 ]; then
+            warn "  run it, then ./install.sh --with-typograf"
+            return 1
+        fi
+        printf '  Run it now? [y/N] '
+        read -r a || a=""
+        case "$a" in y|Y|yes|д|да) ;; *) say "  skipped — run it, then ./install.sh --with-typograf"; return 0 ;; esac
+        sh -c "$cmd" || { warn "  FAILED — $cmd"; return 1; }
+        node_ok || { warn "  Node.js is still missing or older than 12.20"; return 1; }
+    fi
+    npm install --prefix "$TY_PREFIX" --no-fund --no-audit --loglevel=error \
+        "typograf-cli@$TYPOGRAF_VERSION" >/dev/null || { warn "  FAILED — npm install typograf-cli"; return 1; }
+    mkdir -p "$(dirname "$TY_LINK")"
+    ln -sfn "$TY_PREFIX/node_modules/.bin/typograf" "$TY_LINK"
+    if "$TY_LINK" --version >/dev/null 2>&1; then
+        ok "  ok — typograf $("$TY_LINK" --version) at $(tilde "$TY_LINK")"
+    else
+        warn "  FAILED — $(tilde "$TY_LINK") does not run"; return 1
+    fi
+    case ":$PATH:" in
+        *":$HOME/.local/bin:"*) ;;
+        *) warn "  ~/.local/bin is not on PATH — the check finds it there anyway; add it for the shell" ;;
+    esac
+}
+
+if ! typograf_step && [ "$TYPOGRAF" = yes ]; then
+    rc=1   # asked for explicitly and not delivered
 fi
 
 say ""

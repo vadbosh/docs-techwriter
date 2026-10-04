@@ -1,7 +1,7 @@
 ---
 name: ru-tech-docs
 description: Produce the Russian version of English technical documentation — README, manuals, CLI help, release notes, skill files. Use when asked to "переведи доку", "сделай RU версию", "translate the README to Russian", when writing Russian docs alongside English ones, or when reviewing an existing Russian version for calques and unreadable constructions. Covers the lexicon that must not be transliterated, the English structures that have no Russian equivalent, and the mechanical checks that catch drift between the two versions.
-version: "1.4.0"
+version: "1.5.0"
 ---
 
 # Russian technical documentation from English
@@ -57,19 +57,30 @@ describe the mechanism.
    tell the reader to do or expect?
 2. **Write the Russian from that meaning.** If you catch yourself preserving the
    English word order, you are translating, not writing.
+   **Then test the meaning, before any check:** cover the English, read one
+   Russian paragraph, and say in one sentence what the reader must do or
+   expect. Compare with the answer from step 1. A different answer, or none, is
+   a rewrite — no grep below finds a paragraph that is correct word by word and
+   says something else.
 3. **Run the lexicon check** — `references/lexicon.md`. Grep for the known
-   calques; they reappear constantly.
-4. **Check the structures** — `references/patterns.md`, sixteen of them. The
+   calques; they reappear constantly — канцелярит, «ваш» from *your*, «Для
+   активации…» instead of «Чтобы активировать…», and the standard wording of
+   errors («Не удаётся…» / «Не удалось…»).
+4. **Check the structures** — `references/patterns.md`, fourteen of them under
+   sixteen numbers (two were merged; numbers are never reused). The
    subject named by hint instead of by word — the most frequent defect of all —
    actorless prose, headings and table cells that hide their content, metaphor
-   with nothing to point at, plus ellipsis, dangling references, rhetorical
-   flourishes and the reader's first person.
-5. **Run the mechanical pass** — `references/checks.md`, fourteen checks. Facts
+   with nothing to point at, plus ellipsis, dangling references, lost
+   prepositions, rhetorical flourishes and the reader's first person.
+5. **Run the mechanical pass** — `references/checks.md`, fifteen checks. Facts
    that diverged between versions, links and anchors, line widths, stray
    characters, **real paths leaking into examples** — that one is the only check
    here whose consequence is a public repository — sentence length by count,
    whether an edit reached both versions, whether a glob in a list is really a
-   glob, and HTML entities.
+   glob, HTML entities, and typography — quotes, dashes, spaces — through
+   `scripts/typograf_check.py`. That last one needs `typograf` (Node.js); it is
+   the only external program here, and without it the check is skipped, not
+   failed.
 
 Steps 3–5 are cheap and catch what re-reading does not.
 

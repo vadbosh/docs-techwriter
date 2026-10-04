@@ -72,8 +72,15 @@ Each of these has a Russian calque that arrives in the translated version —
 `lexicon.md`; fixing the English original is the cheaper end of the same defect.
 
 ```bash
-grep -rnoiE "tapestry|testament|delve|underscore|foster|harness|navigate|resonate|elevate|embrace|unravel|leverage|streamline|intricate|vibrant|palpable|profound|pivotal|crucial|seamless|robust|transformative|comprehensive|multifaceted|paving the way|important to note|not only .{1,40} but also" *.md docs/*.md
+EN=$(rg -l -g '*.md' -g '!*.RU.md' -g '!*.ru.md' -g '!review-*.md' '[A-Za-z]' .)
+rg -n -i "tapestry|testament|delve|underscore|foster|harness|navigate|resonate|elevate|embrace|unravel|leverage|streamline|intricate|vibrant|palpable|profound|pivotal|crucial|seamless|robust|transformative|comprehensive|multifaceted|paving the way|important to note|not only .{1,40} but also" $EN
 ```
+
+Whole lines, not `-o`: «robust» in "robust to timeouts" and in "a robust
+solution" are different verdicts, and only the line tells them apart.
+`underscore` and `navigate` are ordinary words in technical text («the
+underscore in a name», «navigate to the directory») — a hit there is not a
+finding.
 
 ## What models suppress, and you can put back
 

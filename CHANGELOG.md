@@ -10,6 +10,71 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 1.5.0
+
+Fixes from the cold review of 2026-10-04 (`review-2026-10-04-ru-tech-docs.md`,
+not tracked), a typography check, and rules taken from the Microsoft Russian
+Style Guide.
+
+**The trigger rule loads everywhere.** It lost its `paths:` front matter. Claude
+Code loads a path-scoped rule only when it reads a matching file inside the
+session's project: a session started in one directory and editing docs in
+another never matched, and neither did a file written without a prior read.
+Measured in the session that found it: ten `.md` reads and writes, zero loads.
+The cost is about 1.2 KB in every Claude Code session.
+
+**Checks that missed silently:**
+
+- check 1 now pairs `X.md` with `X.ru.md` — before, such a pair printed nothing,
+  which read as "no divergence";
+- check 7 finds `/root/…`, `/Users/…` and `C:\Users\…`, not only `/home/…`;
+- check 5 finds zero-width spaces, soft hyphens, BOM, and a Latin letter inside
+  a Russian word («сеpвер»);
+- check 13 lists globs with the star anywhere (`/proc/*/environ`, `~/.aws/*`,
+  `**/*.pem`), not only at the ends;
+- check 3 no longer reports a link with a title or a link inside a code block
+  as broken;
+- checks 2, 4 and 9 no longer exit 2 or crash in a project without `docs/`;
+- `en-side.md` searches with `rg`: `grep -rnoiE` there was blocked by this
+  machine's `rg-guard` — the defect `lexicon.md` lost on 2026-09-18.
+
+**Check 15, typography**, through `scripts/typograf_check.py` and
+[typograf-cli](https://github.com/typograf/typograf-cli) 6.2.1 — the one external
+program in the skill, optional. The wrapper exists because typograf knows no
+Markdown (it rewrote `echo "x" -- y` inside a code block) and its `--lint` shows
+one place per rule and exits 0. Rules that are wrong on technical text are off:
+ISO dates, `ru/dash/to` and `ru/dash/kakto` ("так что то, что" became "так
+что-то"), the space after a colon (`host:port`), the curly apostrophe
+(`resolve'ит` is a lexicon defect, not a typography one); non-breaking spaces
+unless `--nbsp`. Paragraphs go to typograf one by one as a JSON array: one
+unpaired quote early in a file had turned every later «…» into „…“. On ten Russian READMEs of
+neighbouring projects: zero lines to change. `tests/test_typograf_check.sh`.
+
+**`install.sh` offers typograf**: `--with-typograf`, `--no-typograf`, or a
+question on a terminal. It installs into `~/.local/share/ru-tech-docs/typograf`
+with `npm --prefix` and no `sudo`. Without Node.js it prints the command for
+`apt-get`, `dnf`/`yum` or `brew` and runs it only on a "yes" typed at the
+prompt, never from a flag; as root it drops `sudo`. Windows is not supported.
+Both READMEs now list every requirement.
+
+**New rules**, from the Microsoft Russian Style Guide (2011) and Travinov's
+handbook — taken from the guides, not yet from a broken document of these
+projects:
+
+- `lexicon.md`: «ваш»/«вы» as a calque of *your*/*you*; «Для активации…» →
+  «Чтобы активировать…»; standard error wording («Не удаётся…» / «Не
+  удалось…», «Дополнительные сведения см. в…»); a term or title stays a
+  genitive chain, with the meaning restated by a verb beside it; greps for the
+  first two;
+- `patterns.md`: the lost preposition («запрос обслуживания» → «запрос на
+  обслуживание») under pattern 6; patterns 3 and 13 merged into 9 and 4, their
+  numbers kept as pointers — fourteen structures under sixteen numbers;
+- `SKILL.md`: the meaning test after writing — cover the English, say in one
+  sentence what the reader must do, compare.
+
+Also: three English headings in `lexicon.md` are Russian now; the example in
+pattern 4 no longer uses another project's file names.
+
 ## 1.4.0
 
 The skill leaves the config canon (`~/ai-config-source`) for a repository of its
