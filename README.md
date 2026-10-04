@@ -36,7 +36,7 @@ For a Russian version:
    reader the same thing to do.
 3. Greps for known calques and канцелярит — `references/lexicon.md`.
 4. Checks fifteen structures that break in Russian — `references/patterns.md`.
-5. Runs seventeen mechanical checks — `references/checks.md`: facts that drifted
+5. Runs eighteen mechanical checks — `references/checks.md`: facts that drifted
    between the versions, links and anchors, real paths leaking into examples,
    sentence length, HTML entities, pointers to a place instead of content,
    version history retold in a README, typography.

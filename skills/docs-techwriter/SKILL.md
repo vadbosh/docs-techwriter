@@ -1,7 +1,7 @@
 ---
 name: docs-techwriter
 description: Write and review technical documentation in Russian and English — README, manuals, CLI help, release notes, changelogs. Covers the English original itself, its Russian version, and a document written in Russian from the start. Use when asked to "переведи доку", "сделай RU версию", "translate the README to Russian", "write the README", "review the docs", when writing Russian and English docs side by side, or when reviewing either version for calques, unreadable constructions and drift between the two. Covers the Russian lexicon that must not be transliterated, the English structures that have no Russian equivalent, the English style rules for a reader whose first language is not English, and the mechanical checks for both.
-version: "2.3.3"
+version: "2.4.0"
 ---
 
 # Technical documentation in Russian and English
@@ -92,12 +92,12 @@ describe the mechanism.
    with nothing to point at, plus ellipsis, dangling references, lost
    prepositions, rhetorical flourishes, the reader's first person, pointers to a
    place instead of content, and a README that retells its changelog.
-5. **Run the mechanical pass** — `references/checks.md`, seventeen checks. Facts
+5. **Run the mechanical pass** — `references/checks.md`, eighteen checks. Facts
    that diverged between versions, links and anchors, line widths, stray
    characters, **real paths leaking into examples** — that one is the only check
    here whose consequence is a public repository — sentence length by count,
    whether an edit reached both versions, whether a glob in a list is really a
-   glob, HTML entities, pointers to a place, version history in a README, and
+   glob, HTML entities, pointers to a place, version history in a README, a dangling «так», and
    typography — quotes, dashes, spaces — through
    `scripts/typograf_check.py`. That last one needs `typograf` (Node.js); it is
    the only external program here, and without it the check is skipped, not

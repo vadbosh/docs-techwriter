@@ -10,6 +10,17 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.4.0
+
+- **Check 18, a dangling «так»**: «не проверялась даже так» and "not tried even
+  that way" made the reader reconstruct "that way" from the sentence before.
+  The grep takes the narrow form only — «даже/тоже/именно так», "even that
+  way": with «и так» and «не так» it had four false hits on neighbouring
+  READMEs («что-то пошло не так»), without them none. Pattern 9 gets the case
+  and points to the check.
+- README.RU.md: «проверка 15 найдёт программу там и так» read two ways; it is
+  «всё равно найдёт программу там».
+
 ## 2.3.3
 
 - Both READMEs: Windows "has not been tried even that way" made the reader
