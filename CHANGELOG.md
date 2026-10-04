@@ -10,6 +10,12 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.3.3
+
+- Both READMEs: Windows "has not been tried even that way" made the reader
+  reconstruct "that way" from the sentence before; it says "neither on a real
+  machine nor in a simulation" now.
+
 ## 2.3.2
 
 - `lexicon.md`: «по умолчанию» said of a person («читатель по умолчанию — не

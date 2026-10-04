@@ -77,11 +77,12 @@ simulation — see [macOS: the expected path](#macos-the-expected-path).
 
 Written for Linux (Debian/Ubuntu and RHEL-like) and macOS; the macOS branch of
 the installer has run only in a simulation. Windows was not planned for and has
-not been tried even that way. The installer is a bash script:
-under Git Bash or Cygwin it skips `typograf`, and nobody has run the rest there.
-The skill itself is Markdown and one Python script, so on Windows it can be
-tried by copying `skills/docs-techwriter/` into the assistant's skills
-directory by hand. The trigger rule then has to be wired by hand as well.
+not been tried, neither on a real machine nor in a simulation. The installer is
+a bash script: under Git Bash or Cygwin it skips `typograf`, and nobody has run
+the rest there. The skill itself is Markdown and one Python script, so on
+Windows it can be tried by copying `skills/docs-techwriter/` into the
+assistant's skills directory by hand. The trigger rule then has to be wired by
+hand as well.
 
 ### macOS: the expected path
 
