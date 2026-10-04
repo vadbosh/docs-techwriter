@@ -10,6 +10,15 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.2.10
+
+- Both READMEs: "a rule from a guide that has not caught a real sentence is
+  marked as such" said neither where nor why. They now say each guide rule
+  carries its count on real READMEs, and that for the assistant a rule with no
+  real case is a reason to look, not to rewrite.
+- That made two rules owe their count: the error formulas in `lexicon.md` (two
+  hits, both right) and the lost preposition in `patterns.md` (none found).
+
 ## 2.2.9
 
 - Both READMEs: the macOS section opens with what it is ("this path is read

@@ -22,7 +22,9 @@ Every rule comes from one of three places, and says which:
 - a published style guide: Google developer documentation, Microsoft Writing
   Style Guide, Microsoft Russian Style Guide.
 
-A rule from a guide that has not yet caught a real sentence is marked as such.
+Each rule from a guide carries its count on real READMEs, and one that has
+found nothing says so. For the assistant this means such a rule is a reason to
+look at a sentence, not a reason to rewrite it.
 
 ## What a run does
 
