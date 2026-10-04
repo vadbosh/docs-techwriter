@@ -10,6 +10,31 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.1.0
+
+Real examples, from a review of the `README.RU.md` of eight neighbouring
+repositories (2026-10-04, 2965 lines; the defect list is
+`review-2026-10-04-readme-ru.md`, not tracked).
+
+- **The rules taken from style guides in 1.5.0 found nothing there**: «ваш» had
+  18 hits, all legitimate contrasts («ваш инстанс, а не этот репозиторий»);
+  «Для + verbal noun», error formulas, lost prepositions and genitive chains —
+  none. `lexicon.md` now says so beside each rule.
+- **A calque of meaning is the most frequent defect left**: a word correct by
+  the dictionary that means something else in Russian. Seven real cases join
+  `lexicon.md` («суммируют сессии», «откатывается к архиву», «судится по
+  пути», «падает в открытую сторону», «побеждает первое сработавшее», …) with
+  a grep that finds all of them and nothing else on the eight files; also
+  «воркстрим» and «синий хребет». `SKILL.md` step 3 names the class.
+- `patterns.md`: real cases for the ellipsis («Мягче — когда…»), an ambiguous
+  case («сообщает ID модели»), telegraph style and dangling «это».
+- `checks.md`: **check 6 finds `---` right under a line of text**, which
+  Markdown renders as an `<h2>` of the whole paragraph — found in a README,
+  confirmed with `pandoc -f commonmark`. Check 1 notes a fact that diverges
+  inside one file («девятнадцать шаблонов» vs «вместо десяти»); check 5 names
+  the `U+FE0F` an emoji leaves behind.
+- `SKILL.md` step 2: a real sentence that only the meaning test catches.
+
 ## 2.0.0
 
 **Breaking: the skill is now `docs-techwriter`**, and so is the repository

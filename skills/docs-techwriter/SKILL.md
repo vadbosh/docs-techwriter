@@ -1,7 +1,7 @@
 ---
 name: docs-techwriter
 description: Produce the Russian version of English technical documentation — README, manuals, CLI help, release notes, skill files. Use when asked to "переведи доку", "сделай RU версию", "translate the README to Russian", when writing Russian docs alongside English ones, or when reviewing an existing Russian version for calques and unreadable constructions. Covers the lexicon that must not be transliterated, the English structures that have no Russian equivalent, and the mechanical checks that catch drift between the two versions.
-version: "2.0.0"
+version: "2.1.0"
 ---
 
 # Russian technical documentation from English
@@ -61,11 +61,18 @@ describe the mechanism.
    Russian paragraph, and say in one sentence what the reader must do or
    expect. Compare with the answer from step 1. A different answer, or none, is
    a rewrite — no grep below finds a paragraph that is correct word by word and
-   says something else.
+   says something else. Found this way in an already reviewed README: «Самая
+   старая сессия у них — это просто день, когда IDE начали пользоваться» — a
+   session cannot be a day; the sentence meant "the oldest session dates from
+   the day the IDE was first used".
 3. **Run the lexicon check** — `references/lexicon.md`. Grep for the known
    calques; they reappear constantly — канцелярит, «ваш» from *your*, «Для
    активации…» instead of «Чтобы активировать…», and the standard wording of
-   errors («Не удаётся…» / «Не удалось…»).
+   errors («Не удаётся…» / «Не удалось…»). Then the class that survives every
+   grep: **a calque of meaning**, a dictionary-correct word that means
+   something else in Russian — «суммировать» for *summarize*, «откатывается» for
+   *falls back*, «судится по пути» for *is judged by path*. On eight READMEs
+   already written with this skill, these were the most frequent defect left.
 4. **Check the structures** — `references/patterns.md`, fourteen of them under
    sixteen numbers (two were merged; numbers are never reused). The
    subject named by hint instead of by word — the most frequent defect of all —
