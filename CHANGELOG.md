@@ -10,6 +10,17 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.2.6
+
+- **Fixed: on macOS the leak check in `release.sh` would have passed without
+  looking.** It ran `grep -P`, which the BSD grep of macOS lacks, with the
+  error sent to `/dev/null` — so it printed "nothing local named in them". It
+  uses `perl` now, present on both systems; a planted `$HOME/…` path still
+  fails the check with exit 3.
+- Both READMEs say why the simulation used bash 3.2: it is still `/bin/bash`
+  on macOS Tahoe 26.4.1 (May 2026); a Homebrew bash 5 first in `PATH` would run
+  the installer instead.
+
 ## 2.2.5
 
 **macOS, simulated.** The installer was run in the `bash:3.2` image — the bash

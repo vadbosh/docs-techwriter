@@ -82,9 +82,14 @@ directory by hand. The trigger rule then has to be wired by hand as well.
 ### macOS: the expected path
 
 Nobody has run the installer on a Mac. What follows is read from `install.sh`
-and partly simulated on Linux: in the `bash:3.2` image — the bash that macOS
-ships — with `uname` answering `Darwin` and a stand-in `brew` that only logs
-its arguments.
+and partly simulated on Linux: in the `bash:3.2` image, with `uname` answering
+`Darwin` and a stand-in `brew` that only logs its arguments.
+
+Why 3.2: it is still the system `/bin/bash` of current macOS — `3.2.57` on
+macOS Tahoe 26.4.1 in May 2026 (github.com/nitefood/asn/issues/108). Apple
+keeps it because later bash is GPLv3, and made zsh the default shell instead.
+The installer starts with `#!/usr/bin/env bash`, so a Homebrew bash 5 that
+comes first in `PATH` runs it instead; that case is the one tested on Linux.
 
 1. The skill is copied into each assistant directory found. Simulated: works.
 2. The trigger rule is wired with `python3`. Without `python3` the installer
