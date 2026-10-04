@@ -10,6 +10,13 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.2.2
+
+- **Both READMEs: the requirements table says what happens without
+  typograf-cli.** "No — the check is skipped without it" read as if the skill
+  might not work; it is "no: the skill works without it, but nothing checks
+  quotes, dashes and spaces".
+
 ## 2.2.1
 
 - **Check 5 no longer flags a legitimate emoji.** `U+FE0F` after a symbol is
