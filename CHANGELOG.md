@@ -10,6 +10,17 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.3.2
+
+- `lexicon.md`: «по умолчанию» said of a person («читатель по умолчанию — не
+  носитель языка») is a calque of *by default*. It joins the calque-of-meaning
+  table with a narrow grep — only next to «читатель», «пользователь», «автор»,
+  «человек». On every Russian document in eight neighbouring repositories the
+  bare phrase has 28 hits, all literal; the narrow grep has none there and finds
+  the sentence fixed in 2.3.1.
+- `patterns.md`, pattern 7: that sentence's verbless list is a real case of
+  telegraph style in running text.
+
 ## 2.3.1
 
 - README.RU.md: the sentence about the English reader is Russian now.
