@@ -52,7 +52,8 @@ the venue and test the meaning of each paragraph. Then run the English rules in
 | an assistant: Claude Code, Opencode or Codex | the skill itself | yes |
 | `python3` | the installer wiring the rule; checks 1, 3, 5, 6, 9, 12, 13, 15 | yes |
 | `rg` (ripgrep), `awk` | the greps in checks 2, 4, 7, 14 and in the lexicon | yes |
-| Node.js 18.19+ or 20.6+ with `npm`, then `typograf-cli` 6.2.1 | check 15: quotes, dashes, spaces | no: the skill works without it, but nothing checks quotes, dashes and spaces |
+| `typograf-cli` 6.2.1 | check 15: quotes, dashes, spaces | no: the skill works without it, but nothing checks quotes, dashes and spaces |
+| Node.js 18.19+ or 20.6+ with `npm` | only to install and run `typograf-cli`; nothing else in the skill uses Node | only with `typograf-cli` |
 
 `typograf-cli` is the one external program. `install.sh` offers it on a
 terminal and installs it into `~/.local/share/docs-techwriter/typograf`, linked as

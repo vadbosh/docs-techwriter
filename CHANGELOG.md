@@ -10,6 +10,12 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.2.3
+
+- **Both READMEs: Node.js has a row of its own** in the requirements table,
+  saying it is needed only for `typograf-cli` and by nothing else in the skill.
+  It shared a row with `typograf-cli` before, which left that unsaid.
+
 ## 2.2.2
 
 - **Both READMEs: the requirements table says what happens without
