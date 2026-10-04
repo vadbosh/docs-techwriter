@@ -86,7 +86,6 @@ rules/ru-tech-docs-trigger.md       правило, которое загруж�
 lib/wire.py                         ставит правило в один ассистент
 install.sh, release.sh              установка; проверки выпуска
 tests/                              тесты typograf_check.py
-kb/                                 рабочие заметки: почему скилл устроен так
 ```
 
 ## Выпуск

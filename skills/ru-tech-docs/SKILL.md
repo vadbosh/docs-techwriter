@@ -1,7 +1,7 @@
 ---
 name: ru-tech-docs
 description: Produce the Russian version of English technical documentation — README, manuals, CLI help, release notes, skill files. Use when asked to "переведи доку", "сделай RU версию", "translate the README to Russian", when writing Russian docs alongside English ones, or when reviewing an existing Russian version for calques and unreadable constructions. Covers the lexicon that must not be transliterated, the English structures that have no Russian equivalent, and the mechanical checks that catch drift between the two versions.
-version: "1.5.0"
+version: "1.5.1"
 ---
 
 # Russian technical documentation from English

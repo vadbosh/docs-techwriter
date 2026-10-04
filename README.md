@@ -84,7 +84,6 @@ rules/ru-tech-docs-trigger.md       the rule that loads the skill
 lib/wire.py                         installs the rule into one assistant
 install.sh, release.sh              install; release checks
 tests/                              tests of typograf_check.py
-kb/                                 work notes: why the skill is shaped this way
 ```
 
 ## Releasing

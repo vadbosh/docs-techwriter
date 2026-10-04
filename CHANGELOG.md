@@ -10,6 +10,13 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 1.5.1
+
+Repository only; the skill's text is unchanged. `.gitignore` carries the
+canonical `ai-gitignore` block, and `AGENTS.md`, `CLAUDE.md` and `kb/` are no
+longer tracked — they are the assistant's local notes, as in `ide-sessions`.
+They stay on disk; the earlier commits still contain them.
+
 ## 1.5.0
 
 Fixes from the cold review of 2026-10-04 (`review-2026-10-04-ru-tech-docs.md`,
