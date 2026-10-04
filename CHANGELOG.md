@@ -10,6 +10,22 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.4.1
+
+A full structure pass over both READMEs, instead of one sentence at a time.
+
+- **The requirements table had drifted from `checks.md`:** `python3` is needed
+  by checks 1, 3, 4, 5, 6, 8, 9, 12, 13, 15 (4 and 8 were missing), `rg` by 2,
+  4, 5, 7, 10, 14, 16, 17, 18 (five were missing); `awk` has a row of its own.
+- "Without the rule the skill does not fire" contradicted the macOS section and
+  spoke only of Russian next to English. Both READMEs now say the skill then
+  loads only when asked by name.
+- README.md: "For English, the reader is assumed…" was the same verbless list
+  fixed in the Russian version in 2.3.1.
+- README.RU.md: a verb missing after «затем», «то же самое» with nothing to
+  compare to, «конструкций» where `patterns.md` says «структур»; both: "Simulated:
+  works" / «В симуляции — работает», and «остальное там» under Git Bash.
+
 ## 2.4.0
 
 - **Check 18, a dangling «так»**: «не проверялась даже так» and "not tried even

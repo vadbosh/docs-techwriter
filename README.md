@@ -11,8 +11,9 @@ It is the same content stated the way a Russian technical writer would state it.
 When a phrase resists translation, the skill stops translating and describes the
 mechanism instead.
 
-For English, the reader is assumed not to be a native speaker: one idea per
-sentence, the actor named, no idiom that has to be decoded.
+English text is written for a reader whose first language is not English. So
+each sentence holds one idea, says who acts, and uses no idiom that has to be
+decoded.
 
 Every rule comes from one of three places, and says which:
 
@@ -53,13 +54,14 @@ the venue and test the meaning of each paragraph. Then run the English rules in
 | What | Needed for | Required |
 |---|---|---|
 | an assistant: Claude Code, Opencode or Codex | the skill itself | yes |
-| `python3` | the installer wiring the rule; checks 1, 3, 5, 6, 9, 12, 13, 15 | yes |
-| `rg` (ripgrep), `awk` | the greps in checks 2, 4, 7, 14 and in the lexicon | yes |
+| `python3` | the installer wiring the rule; checks 1, 3, 4, 5, 6, 8, 9, 12, 13, 15 | yes |
+| `rg` (ripgrep) | the greps in checks 2, 4, 5, 7, 10, 14, 16, 17, 18 and in the lexicon | yes |
+| `awk` | check 4: line width | yes |
 | `typograf-cli` 6.2.1 | check 15: quotes, dashes, spaces | no: the skill works without it, but nothing checks quotes, dashes and spaces |
 | Node.js 18.19+ or 20.6+ with `npm` | only to install and run `typograf-cli`; nothing else in the skill uses Node | only with `typograf-cli` |
 
-`typograf-cli` is the one external program. `install.sh` offers it on a
-terminal and installs it into `~/.local/share/docs-techwriter/typograf`, linked as
+`typograf-cli` is the one external program. `install.sh` offers it on a terminal
+and installs it into `~/.local/share/docs-techwriter/typograf`, linked as
 `~/.local/bin/typograf` — `npm --prefix`, no `sudo`. Without Node.js it prints
 the command for the system package manager and offers to run it: `apt-get`
 (Debian, Ubuntu), `dnf` or `yum` (RHEL, Fedora, CentOS), `brew` (macOS). That
@@ -78,17 +80,17 @@ simulation — see [macOS: the expected path](#macos-the-expected-path).
 Written for Linux (Debian/Ubuntu and RHEL-like) and macOS; the macOS branch of
 the installer has run only in a simulation. Windows was not planned for and has
 not been tried, neither on a real machine nor in a simulation. The installer is
-a bash script: under Git Bash or Cygwin it skips `typograf`, and nobody has run
-the rest there. The skill itself is Markdown and one Python script, so on
-Windows it can be tried by copying `skills/docs-techwriter/` into the
-assistant's skills directory by hand. The trigger rule then has to be wired by
-hand as well.
+a bash script. Under Git Bash or Cygwin it skips `typograf`; whether it installs
+the skill and the rule there has not been checked. The skill itself is Markdown
+and one Python script, so on Windows it can be tried by copying
+`skills/docs-techwriter/` into the assistant's skills directory by hand. The
+trigger rule then has to be wired by hand as well.
 
 ### macOS: the expected path
 
 Nobody has run the installer on a Mac. This path is read from `install.sh`, and
-part of it was simulated on Linux: in the `bash:3.2` image, with `uname` answering
-`Darwin` and a stand-in `brew` that only logs its arguments.
+part of it was simulated on Linux: in the `bash:3.2` image, with `uname`
+answering `Darwin` and a stand-in `brew` that only logs its arguments.
 
 Why 3.2: it is still the system `/bin/bash` of current macOS — `3.2.57` on
 macOS Tahoe 26.4.1 in May 2026 (github.com/nitefood/asn/issues/108). Apple
@@ -96,7 +98,8 @@ keeps it because later bash is GPLv3, and made zsh the default shell instead.
 The installer starts with `#!/usr/bin/env bash`, so a Homebrew bash 5 that
 comes first in `PATH` runs it instead; that case is the one tested on Linux.
 
-1. The skill is copied into each assistant directory found. Simulated: works.
+1. The skill is copied into each assistant directory found. In the simulation
+   the copy went through.
 2. The trigger rule is wired with `python3`. Without `python3` the installer
    says so and leaves the rule out; the skill then loads only when asked by
    name.
@@ -116,13 +119,13 @@ git clone <this repository> && cd docs-techwriter
 ./install.sh
 ```
 
-`install.sh` copies the skill into every assistant it finds
-(`~/.claude/skills`, `~/.config/opencode/skills`, `~/.codex/skills`) and
-installs the trigger rule `rules/docs-techwriter-trigger.md` beside it. The rule is
-what makes the skill fire: writing Russian next to English reads as ordinary
-work and never matches the skill's description on its own. Opencode and Codex
-read a rule only when their config points at it, so the installer adds the
-entry to `opencode.json` `instructions[]` and the `@`-reference to
+`install.sh` copies the skill into every assistant it finds (`~/.claude/skills`,
+`~/.config/opencode/skills`, `~/.codex/skills`) and installs the trigger rule
+`rules/docs-techwriter-trigger.md` beside it. Without the rule the skill loads
+only when asked by name: documentation is usually written in the middle of other
+work, which never matches the skill's description on its own. Opencode and Codex
+read a rule only when their config points at it, so the installer adds the entry
+to `opencode.json` `instructions[]` and the `@`-reference to
 `~/.codex/AGENTS.md`. A file it is about to change is backed up first.
 
 `--no-rule` installs the skill alone. `--skills-dir D` installs the skill into
