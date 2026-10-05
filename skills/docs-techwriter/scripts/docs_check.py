@@ -57,6 +57,35 @@ CHECKS = [
     ("en-side.md, a guide rule", r"\b(e\.g\.|i\.e\.)|\ballows? you to\b", "en", True),
 ]
 
+# ASD-STE100, "80% of the way" (en-side.md): only the replacements that keep
+# the meaning whole. (regex, the word, the approved word)
+STE_WORDS = [
+    (r"\butiliz(e|es|ed|ing|ation)\b", "utilize", "use"),
+    (r"\bprior to\b", "prior to", "before"),
+    (r"\bin order to\b", "in order to", "to"),
+    (r"\bapproximately\b", "approximately", "about"),
+    (r"\bcommenc(e|es|ed|ing|ement)\b", "commence", "start"),
+    (r"\breplenish(es|ed|ing)?\b", "replenish", "fill"),
+    (r"\bin the event that\b", "in the event that", "if"),
+    (r"\bdue to the fact that\b", "due to the fact that", "because"),
+]
+STE_STEP_WORDS = 20
+# A numbered item is a procedure step only when it gives a command: it opens
+# with one of these verbs, or with a condition followed by one. Measured on
+# nine READMEs: most numbered lists describe ("Writes…", "Otherwise the
+# model…") and checked as steps they were noise.
+STE_VERBS = (
+    "add append apply attach build cd change check choose clear click clone close commit "
+    "configure connect copy create delete disable download edit enable enter export extract "
+    "fill find generate go import init initialize install keep launch log make merge move "
+    "open pass paste point press pull push put read reboot register reload remove rename "
+    "replace restart restore review run save select set sign start stop switch tag test "
+    "turn type uninstall unpack update upgrade use verify wait write").split()
+STE_CONDITION = r"(if|when|while|after|before|once|to|in|on|from)\b[^,]*,\s*"
+STE_STEP = re.compile(rf"^(\*\*)?({STE_CONDITION})?({'|'.join(STE_VERBS)})\b", re.I)
+STE_PASSIVE = r"\b(is|are|was|were|be|been|being)\s+(\w{2,}ed|built|made|run|sent|set|shown|written|given|taken|kept|found)\b"
+STE_PROGRESSIVE = r"\b(is|are|was|were|be|been)\s+(?!\w*thing\b)\w{2,}ing\b"
+
 
 def payload_edits(data):
     """Return [(path, [written text, ...] or None for the whole file)]."""
@@ -180,6 +209,40 @@ def long_sentences(pl, wanted, limit):
     return hits
 
 
+def procedure_steps(pl, wanted):
+    """ASD-STE100 on numbered steps the edit touched: length, passive, -ing.
+
+    Only a numbered item that gives a command is a procedure step (STE_STEP);
+    a bullet list, or a numbered list that describes, is not. Descriptive
+    text keeps its passive, as STE itself allows.
+    """
+    steps, cur = [], None
+    for n in sorted(pl):
+        line = pl[n]
+        m = re.match(r"^\s*\d+[.)]\s+(.*)$", line)
+        if m:
+            cur = [n, [n], m.group(1)]
+            steps.append(cur)
+        elif cur and line.strip() and line.startswith((" ", "\t")) and n == cur[1][-1] + 1:
+            cur[1].append(n)
+            cur[2] += " " + line.strip()
+        else:
+            cur = None
+    hits = []
+    for first, nums, text in steps:
+        if not wanted.intersection(nums) or not STE_STEP.match(text):
+            continue
+        words = len(text.split())
+        if words > STE_STEP_WORDS:
+            hits.append((first, f"STE100, a procedure step of {words} words "
+                                f"(limit {STE_STEP_WORDS}): {text[:60]}…"))
+        if re.search(STE_PASSIVE, text, re.I):
+            hits.append((first, f"STE100, passive in a procedure step — name who acts: {text[:70]}"))
+        if re.search(STE_PROGRESSIVE, text, re.I):
+            hits.append((first, f"STE100, progressive in a procedure step — simple tense: {text[:70]}"))
+    return hits
+
+
 def typograf(path, lang, wanted):
     script = os.path.join(HERE, "typograf_check.py")
     try:
@@ -220,7 +283,13 @@ def check(path, written):
                 continue
             if re.search(rx, line, re.I):
                 hits.append((n, f"{label}: {line.strip()[:90]}"))
-    hits += long_sentences(pl, wanted, 30 if lang == "ru" else 35)
+        if lang == "en":
+            for rx, word, alt in STE_WORDS:
+                if re.search(rx, line, re.I):
+                    hits.append((n, f"STE100 dictionary, {word} → {alt}: {line.strip()[:70]}"))
+    hits += long_sentences(pl, wanted, 30 if lang == "ru" else 25)
+    if lang == "en":
+        hits += procedure_steps(pl, wanted)
     hits += typograf(path, lang, wanted)
     return lang, wanted, sorted(set(hits))
 

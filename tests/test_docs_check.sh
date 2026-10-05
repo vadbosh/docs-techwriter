@@ -75,6 +75,48 @@ printf -- '---\nname: x\ndescription: Как сказано выше, это п�
 out="$(edit "$T/README.RU.md" 'description: Как сказано выше, это поле.' | run)"
 case "$out" in *"check 16"*) bad "front matter: must not be checked" "$out" ;; *) ok ;; esac
 
+# ASD-STE100, 80% of the way: English only, hints only
+S27='The installer copies the skill into each assistant directory it finds on this machine and then adds the trigger rule and the hook that runs after every edit.'
+printf '# tool\n\n%s\n' "$S27" > "$T/README.md"
+has "STE100: an English sentence over 25 words" "sentence of 28 words" "$(edit "$T/README.md" "$S27")"
+
+R27='Установщик копирует скилл в каталог каждого ассистента, который он находит на этой машине, а затем добавляет правило-триггер и хук, который запускается после каждой правки документации в любом ассистенте.'
+printf '# tool\n\n%s\n' "$R27" > "$T/README.RU.md"
+out="$(edit "$T/README.RU.md" "$R27" | run)"
+case "$out" in *"sentence of"*) bad "STE100: Russian keeps its own limit of 30" "$out" ;; *) ok ;; esac
+
+STEP='1. Open the configuration file in the editor of your choice and set the value of the timeout field to the number of seconds you need.'
+printf '# tool\n\n%s\n' "$STEP" > "$T/README.md"
+has "STE100: a procedure step over 20 words" "procedure step of 25 words" "$(edit "$T/README.md" "$STEP")"
+
+printf '# tool\n\n1. Open the file. The value is set to 30.\n' > "$T/README.md"
+has "STE100: passive in a procedure step" "STE100, passive" "$(edit "$T/README.md" '1. Open the file. The value is set to 30.')"
+
+# a numbered list that describes rather than instructs is not a procedure
+DESC='1. Writes the Russian from the meaning of the English, not from its word order, and keeps every command, path and error string as it is written.'
+printf '# tool\n\n%s\n' "$DESC" > "$T/README.md"
+out="$(edit "$T/README.md" "$DESC" | run)"
+case "$out" in *"procedure step"*) bad "STE100: a descriptive numbered item is not a step" "$out" ;; *) ok ;; esac
+DESC='2. Otherwise the model Codex is configured with is used, which is set in its own config file.'
+printf '# tool\n\n%s\n' "$DESC" > "$T/README.md"
+out="$(edit "$T/README.md" "$DESC" | run)"
+case "$out" in *"STE100, passive"*) bad "STE100: passive in a descriptive numbered item" "$out" ;; *) ok ;; esac
+
+printf '# tool\n\n1. While the installer is running, open a new terminal.\n' > "$T/README.md"
+has "STE100: progressive in a procedure step" "STE100, progressive" "$(edit "$T/README.md" '1. While the installer is running, open a new terminal.')"
+
+printf '# tool\n\nThe file is copied to the skills directory.\n' > "$T/README.md"
+out="$(edit "$T/README.md" 'The file is copied to the skills directory.' | run)"
+case "$out" in *"STE100, passive"*) bad "STE100: passive in descriptive text is allowed" "$out" ;; *) ok ;; esac
+
+printf '# tool\n\nUtilize the flag prior to the first run.\n' > "$T/README.md"
+has "STE100 dictionary: utilize -> use" "utilize → use" "$(edit "$T/README.md" 'Utilize the flag prior to the first run.')"
+has "STE100 dictionary: prior to -> before" "prior to → before" "$(edit "$T/README.md" 'Utilize the flag prior to the first run.')"
+
+printf '# tool\n\nRun `in_order_to --approximately` first.\n' > "$T/README.md"
+out="$(edit "$T/README.md" 'Run `in_order_to --approximately` first.' | run)"
+case "$out" in *"STE100 dictionary"*) bad "STE100 dictionary: inline code is not prose" "$out" ;; *) ok ;; esac
+
 # garbage on stdin never breaks the edit
 out="$(printf 'not json' | run)"; rc=$?
 [ "$rc" -eq 0 ] && [ -z "$out" ] && ok || bad "garbage input: exit 0, no output" "rc=$rc $out"

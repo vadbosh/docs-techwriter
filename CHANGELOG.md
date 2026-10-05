@@ -10,6 +10,20 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.6.0
+
+- English text gets ASD-STE100 at "80% of the way": the limits and the
+  replacements that keep the meaning whole. The rules are a new section of
+  `en-side.md`. The hook reports them as hints, never as errors.
+- The sentence length check flags an English sentence over 25 words, not 35. On nine READMEs that
+  is 121 sentences instead of 29.
+- A numbered step that gives a command is flagged over 20 words, and for the
+  passive or an *-ing* form. A numbered list that describes is not a procedure
+  and is not checked.
+- Eight words get their STE replacement: utilize → use, prior to → before,
+  in order to → to, approximately → about, commence → start, replenish → fill,
+  in the event that → if, due to the fact that → because.
+
 ## 2.5.2
 
 - The hook is now tested in a live session of Codex and Opencode as well, not

@@ -45,7 +45,7 @@ them; reading did — the same as in Russian.
 
 | Structure | As written | Fix |
 |---|---|---|
-| **A chain of clauses** — dash, semicolon, dash, each adding a thought | "…`safe-env` had carried that rule since the first commit while the redactor beside it had not, and nothing was going to notice — two implementations of one policy drift in silence, which is also why…" (63 words) | One sentence per idea. Google aims under 26 words; check 9 in `checks.md` flags 35 |
+| **A chain of clauses** — dash, semicolon, dash, each adding a thought | "…`safe-env` had carried that rule since the first commit while the redactor beside it had not, and nothing was going to notice — two implementations of one policy drift in silence, which is also why…" (63 words) | One sentence per idea. Google aims under 26 words; check 9 in `checks.md` flags 25, the ASD-STE100 limit |
 | **A dangling participle** — the opening clause has no subject of its own | "Replayed over every Claude Code reply on the author's machine, **it** would have fired on 53 of 3236" — the hook was not replayed; the replies were | "Replaying every Claude Code reply on the author's machine showed that the hook would have fired on 53 of 3236" |
 | **A garden path** — the first reading is wrong, and the sentence has to be read again | "what caught `zai-sk-…` being read as an OpenAI key was a test asserting that a model name is not a finding, not the pattern that let it through" | "The model name `zai-sk-…` was read as an OpenAI key. A test caught it — one that asserts a model name is not a finding. The pattern itself had let it through" |
 | **A category error** — found only by the meaning test | "Their oldest session is simply the day the IDE was first used" — a session is not a day. The Russian version inherited it word for word | "Their oldest session dates from the day the IDE was first used" |
@@ -138,6 +138,58 @@ solution" are different verdicts, and only the line tells them apart.
 `underscore` and `navigate` are ordinary words in technical text («the
 underscore in a name», «navigate to the directory») — a hit there is not a
 finding.
+
+## ASD-STE100, 80% of the way
+
+ASD-STE100 (Simplified Technical English, asd-ste100.org) is the controlled
+language of aircraft maintenance manuals. It was made for readers whose first
+language is not English — the reader this page assumes. Andrej Karpathy
+suggested it on 2026-10-02 as the register for reading LLM output, and
+"80% of the way" when the full specification is too strict. This page takes
+that 80%: the limits and the replacements that keep the meaning whole. It does
+not take the closed dictionary, the UPPERCASE convention or the one-meaning
+rule — a README needs its own terms, and a forced synonym loses more than it
+gains.
+
+**Meaning wins.** When the STE form changes what the sentence says, keep the
+original and move on. A hint from the hook is a question, not a verdict.
+
+| Rule | STE limit | Hook | Not so | So |
+|---|---|---|---|---|
+| A procedure step | 20 words | yes, numbered items that give a command | "Open the configuration file in the editor of your choice and set the timeout to the number of seconds you need" | "Open the configuration file. Set `timeout` to the number of seconds." |
+| A descriptive sentence | 25 words | yes, check 9 | — | — |
+| A paragraph | 6 sentences, one topic | no, read | — | — |
+| A noun cluster | 3 words | no, read | "hook output context injection mechanism" | "the mechanism that injects the hook output" |
+| One instruction per sentence, except simultaneous actions | 1 | no, read | "Stop the service and delete the cache" | two steps |
+| Active voice in a procedure step | — | yes, hint | "The file is copied to the skills directory" | "Copy the file to the skills directory" |
+| Simple tenses in a procedure step, no *-ing* | — | yes, hint | "While the installer is running, …" | "When the installer runs, …" |
+| Do not leave out *the*, *a*, *this* | — | no, read | "Run installer, then check copies" | "Run the installer, then check the copies" |
+
+Passive voice in descriptive text is allowed, as STE itself allows it.
+
+A numbered item counts as a procedure step only when it opens with a command
+verb, or with a condition and then a command verb ("If the hook is silent,
+run…"). Measured on nine READMEs on 2026-10-05: most numbered lists describe —
+"Writes the Russian…", "Otherwise the model…" — and checked as steps they gave
+21 hints, 20 of them noise. Restricted to commands, one hint remained, and it
+was a real step.
+
+**The dictionary.** Only replacements that lose nothing; the hook flags each one.
+
+| Not approved | Approved |
+|---|---|
+| utilize | use |
+| prior to | before |
+| in order to | to |
+| approximately | about |
+| commence | start |
+| replenish | fill |
+| in the event that | if |
+| due to the fact that | because |
+
+STE also rejects *ensure* (→ *make sure*) and *close* as an adjective (→ *near*).
+They are left out of the hook: both are common and harmless in technical
+English, and every hit would be a question with the answer "keep it".
 
 ## Greps from the style guides
 

@@ -139,8 +139,8 @@ The rule loads the skill, but it does not make the model run the checks. So
 `install.sh` also installs a hook. After each edit of a document, the hook runs
 `scripts/docs_check.py` on the lines that edit wrote and returns the findings to
 the model at once. The checks are 16–18, the calques and канцелярит of the
-lexicon, the word lists of `en-side.md`, sentence length, and typography when
-`typograf-cli` is installed. A defect that was already in the file is not
+lexicon, the word lists of `en-side.md`, sentence length, ASD-STE100 hints for
+English text, and typography when `typograf-cli` is installed. A defect that was already in the file is not
 reported again. At the end the hook always asks the model to read the changed
 paragraphs against `patterns.md`: no word search finds a paragraph that says
 the wrong thing or that nobody needs.
