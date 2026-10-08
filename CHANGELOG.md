@@ -10,6 +10,16 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.6.1
+
+- **A backup no longer sits beside the file it copies.** `install.sh` and
+  `lib/wire.py` put the copy into `~/.local/state/docs-techwriter-backups`,
+  named by its path below `$HOME`, the three newest per file kept. Six were
+  found beside their files: `docs_check.py.bak.*` inside the skill directory of
+  all three assistants, where each loaded it as part of the skill, and
+  `AGENTS.md.bak.*` in `~/.codex`, `opencode.json.bak.*` in
+  `~/.config/opencode`.
+
 ## 2.6.0
 
 - English text gets ASD-STE100 at "80% of the way": the limits and the

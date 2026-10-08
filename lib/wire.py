@@ -24,7 +24,9 @@ config points at, and an unreferenced rule is dead without saying so.
 
 Exit codes: 0 done (or nothing to do), 1 failed, 3 assistant not installed.
 Existing entries are never rewritten or reordered; a file this script is about
-to change is copied to <file>.bak.<timestamp> first.
+to change is copied to ~/.local/state/docs-techwriter-backups first, the
+three newest per file kept — never beside it, where Codex or Opencode would
+find it.
 """
 import argparse
 import json
@@ -36,6 +38,9 @@ import time
 RULE = "docs-techwriter-trigger.md"
 H = os.path.expanduser("~")
 STAMP = time.strftime("%Y%m%d-%H%M%S")
+BACKUP_DIR = os.environ.get("DOCS_TECHWRITER_BACKUP_DIR") or os.path.join(
+    os.environ.get("XDG_STATE_HOME") or os.path.join(H, ".local", "state"),
+    "docs-techwriter-backups")
 DRY = False
 
 IDE = {
@@ -64,8 +69,17 @@ def tilde(path):
 
 
 def backup(path):
-    if os.path.exists(path):
-        shutil.copy2(path, f"{path}.bak.{STAMP}")
+    if not os.path.exists(path):
+        return
+    os.makedirs(BACKUP_DIR, exist_ok=True)
+    os.chmod(BACKUP_DIR, 0o700)
+    rel = os.path.relpath(path, H) if path.startswith(H + os.sep) else path.lstrip(os.sep)
+    base = os.path.join(BACKUP_DIR, rel.replace(os.sep, "_") + ".bak.")
+    shutil.copy2(path, base + STAMP)
+    old = sorted((f for f in os.listdir(BACKUP_DIR)
+                  if os.path.join(BACKUP_DIR, f).startswith(base)), reverse=True)
+    for f in old[3:]:
+        os.remove(os.path.join(BACKUP_DIR, f))
 
 
 def copy_if_changed(src, dst):
