@@ -10,7 +10,7 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
-## Unreleased
+## 2.6.2
 
 - **GitHub alert markers are no longer broken.** `typograf_check.py` proposed
   `> [!IMPORTANT]` as `> [! IMPORTANT]`, which stops GitHub rendering the
