@@ -52,6 +52,7 @@ INLINE = re.compile(
     r"|<https?://[^>\s]+>"                # autolink
     r"|https?://\S+"                      # bare URL
     r"|<!--.*?-->"                        # one-line HTML comment
+    r"|\[!(?:NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]"  # GitHub alert marker: "[!" stays glued
     r"|\*+|__"                            # emphasis markers: typograf reads ** as a word
 )
 

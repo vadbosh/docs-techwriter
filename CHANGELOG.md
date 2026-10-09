@@ -10,6 +10,15 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## Unreleased
+
+- **GitHub alert markers are no longer broken.** `typograf_check.py` proposed
+  `> [!IMPORTANT]` as `> [! IMPORTANT]`, which stops GitHub rendering the
+  block as an alert. typograf reads `[!` as punctuation followed by a word and
+  adds a space. The five markers (NOTE, TIP, IMPORTANT, WARNING, CAUTION) are
+  now masked like inline code. The `docs_check.py` hook calls the same script,
+  so it is fixed too. Tests added.
+
 ## 2.6.1
 
 - **A backup no longer sits beside the file it copies.** `install.sh` and

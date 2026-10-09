@@ -66,5 +66,16 @@ printf '```\ncode\n```\nЗапусти "x" - сейчас.\n' > "$T/lines.md"
 out="$(cd "$T" && python3 "$W" lines.md 2>&1)"; [ "${out%%$'\n'*}" = "lines.md:4" ] \
     && pass=$((pass + 1)) || { fail=$((fail + 1)); echo "FAIL line number: want lines.md:4"; }
 
+# GitHub alert markers: "[!IMPORTANT]" must never become "[! IMPORTANT]", in both
+# languages, while a real defect on the next line is still found.
+for kind in NOTE TIP IMPORTANT WARNING CAUTION; do
+    printf '> [!%s]\n> **Установите `x`.** текст\n' "$kind" > "$T/alert-$kind.md"
+    expect "alert $kind ru" 0 "alert-$kind.md"
+    printf '> [!%s]\n> **Install `x`.** text\n' "$kind" > "$T/alert-en-$kind.md"
+    expect "alert $kind en" 0 --lang en "alert-en-$kind.md"
+done
+printf '> [!NOTE]\n> Запусти "x" - сейчас.\n' > "$T/alert-bad.md"
+expect "alert block still checked" 1 alert-bad.md
+
 echo "typograf_check: $pass passed, $fail failed"
 [ "$fail" -eq 0 ]
