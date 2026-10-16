@@ -10,6 +10,15 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.6.3
+
+- **The docs-check plugin loads in OpenCode 2.** OpenCode 2 accepts only a
+  plugin that exports a default object with an `id` and `setup()`. The old
+  `export const DocsCheckPlugin` alone failed at load, so the hook never ran.
+  `plugins/opencode/docs-check.ts` now exports both shapes: OpenCode 2 calls
+  `setup()`, OpenCode 1 calls `server()`. It reads the file from the `path`
+  argument that OpenCode 2 uses, and adds the findings to the tool result.
+
 ## 2.6.2
 
 - **GitHub alert markers are no longer broken.** `typograf_check.py` proposed
