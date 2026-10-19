@@ -77,5 +77,19 @@ done
 printf '> [!NOTE]\n> Запусти "x" - сейчас.\n' > "$T/alert-bad.md"
 expect "alert block still checked" 1 alert-bad.md
 
+# An "x" between digits is a hash, a resolution or a version far more often
+# than a multiplication, and an identifier does not have to sit in backticks to
+# be one. Real case: on an advisory page the check offered
+# GHSA-2fmv-rv2c-59x7 -> GHSA-2fmv-rv2c-59×7, which breaks the link. The
+# identifier was in a plain <td>, where typograf's own protection for <pre> and
+# <code> does not reach, so the rule itself has to be off.
+printf '<td>GHSA-2fmv-rv2c-59x7</td>\n<td>1920x1080</td>\n' > "$T/ident.html"
+expect "digits around x are not a multiplication" 0 ident.html
+expect "digits around x are not a multiplication, en" 0 --lang en ident.html
+
+# Prose in an unprotected element is still checked.
+printf '<td>Запусти "скрипт" - сейчас.</td>\n' > "$T/td-bad.html"
+expect "prose in a td still checked" 1 td-bad.html
+
 echo "typograf_check: $pass passed, $fail failed"
 [ "$fail" -eq 0 ]

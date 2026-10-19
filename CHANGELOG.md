@@ -10,6 +10,23 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.6.4
+
+- **An identifier with an `x` between digits is no longer corrupted.**
+  `typograf_check.py` proposed `GHSA-2fmv-rv2c-59x7` as `GHSA-2fmv-rv2c-59×7`
+  on an advisory page, which breaks the link the identifier is part of. The
+  rule is `common/number/times`, now in `ALWAYS_OFF`: between digits an `x` is
+  a hash, a resolution or a version far more often than a multiplication.
+
+  The first diagnosis was wrong, and it is recorded here because it looks
+  right. The identifier sat in a `<td>`, and the guess was that `INLINE` fails
+  to mask HTML `<code>` and `<pre>`. Measured: typograf protects both of those
+  elements itself — it rewrote the text in `<p>` and `<td>` and left `<pre>`
+  and `<code>` alone. Masking them in this script changed no outcome on any
+  input, so the masking written for it was dropped. Only an unprotected element
+  needed the rule off. Tests cover a bare identifier, `1920x1080`, and prose in
+  a `<td>` still being checked.
+
 ## 2.6.3
 
 - **The docs-check plugin loads in OpenCode 2.** OpenCode 2 accepts only a

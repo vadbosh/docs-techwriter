@@ -43,7 +43,13 @@ ALWAYS_OFF = ",".join("common/space/" + r for r in (
     ",common/space/afterColon"
     # resolve'ит → resolve’ит treats the wrong problem: the apostrophe ending is
     # itself the defect (lexicon.md), and its grep looks for a straight '
-    ",common/punctuation/apostrophe")
+    ",common/punctuation/apostrophe"
+    # "59x7" inside an identifier is not a multiplication: this rule offered
+    # GHSA-2fmv-rv2c-59x7 -> GHSA-2fmv-rv2c-59×7 on an advisory page, which
+    # breaks the link. Digits around an "x" are a hash, a resolution or a
+    # version far more often than they are dimensions, and an identifier does
+    # not have to sit in backticks to be one.
+    ",common/number/times")
 MARK = "\ue000{}\ue001"   # private-use characters: typograf leaves them alone
 TOKEN = re.compile("\ue000(\\d+)\ue001")
 INLINE = re.compile(
