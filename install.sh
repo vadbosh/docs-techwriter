@@ -20,7 +20,8 @@
 # It goes into ~/.local (npm --prefix, no sudo) and needs Node.js 18.19+ or 20.6+;
 # without Node the installer prints the package-manager command and offers to
 # run it — apt (Debian, Ubuntu), dnf/yum (RHEL, Fedora, CentOS), brew (macOS).
-# Windows is not supported.
+# Windows is not supported. A typograf this script installed is replaced on a
+# re-run when TYPOGRAF_VERSION changes; one installed some other way is not.
 #
 # Idempotent: re-running replaces only what changed. A file it overwrites is
 # copied to ~/.local/state/docs-techwriter-backups ONLY when that content is not
@@ -221,6 +222,7 @@ fi
 # ── typograf-cli: optional, for check 15 ────────────────────────────────────
 TYPOGRAF_VERSION="6.2.1"   # the version the wrapper's rule list was measured on
 TY_PREFIX="${XDG_DATA_HOME:-$HOME/.local/share}/docs-techwriter/typograf"
+TY_OLD_PREFIX="${XDG_DATA_HOME:-$HOME/.local/share}/ru-tech-docs/typograf"   # before 2.0.0
 TY_LINK="$HOME/.local/bin/typograf"
 
 os_family() {
@@ -286,9 +288,41 @@ node_ok() {
 
 typograf_step() {
     say "── typograf (optional: check 15 — quotes, dashes, spaces) ──"
-    local fam cmd a
+    local fam cmd a where have
     if command -v typograf >/dev/null 2>&1; then
-        ok "  ok — $(typograf --version 2>/dev/null) at $(tilde "$(command -v typograf)")"
+        where="$(command -v typograf)"
+        have="$(typograf --version 2>/dev/null || true)"
+        # One that this script put there follows TYPOGRAF_VERSION and the
+        # current prefix; any other (npm -g, brew) is the person's, left alone.
+        # Without this a typograf already on PATH was never updated, and the one
+        # under the old name stayed at its version for good.
+        case "$(readlink "$where" 2>/dev/null || true)" in
+            "$TY_PREFIX"/*)
+                if [ "$have" = "$TYPOGRAF_VERSION" ]; then
+                    ok "  ok — $have at $(tilde "$where")"
+                    ty_old_prefix
+                    return 0
+                fi ;;
+            "$TY_OLD_PREFIX"/*) ;;
+            *)
+                ok "  ok — ${have:-?} at $(tilde "$where")"
+                [ "$have" = "$TYPOGRAF_VERSION" ] ||
+                    warn "  not installed by this script, left as is; check 15 was measured on $TYPOGRAF_VERSION"
+                return 0 ;;
+        esac
+        # Replaced without asking: the yes was given when it was installed.
+        if [ "$DRY_RUN" -eq 1 ]; then
+            say "  would replace typograf ${have:-?} with $TYPOGRAF_VERSION in $(tilde "$TY_PREFIX")"
+            return 0
+        fi
+        node_ok || { warn "  Node.js $NODE_MIN with npm is needed to update typograf ${have:-?}"; return 1; }
+        if [ "$have" = "$TYPOGRAF_VERSION" ]; then
+            say "  typograf $have: $(tilde "$TY_OLD_PREFIX") → $(tilde "$TY_PREFIX")"
+        else
+            say "  typograf ${have:-?} → $TYPOGRAF_VERSION in $(tilde "$TY_PREFIX")"
+        fi
+        ty_install || return 1
+        ty_old_prefix
         return 0
     fi
     fam="$(os_family)"
@@ -335,6 +369,17 @@ typograf_step() {
             warn "  Newer builds: https://nodejs.org, NodeSource, or nvm; then ./install.sh --with-typograf"
             return 1; }
     fi
+    ty_install
+}
+
+# The old prefix is not deleted: named, the same as the old skill copies above.
+ty_old_prefix() {
+    [ -d "$TY_OLD_PREFIX" ] || return 0
+    warn "  $(tilde "$TY_OLD_PREFIX") is from ru-tech-docs (the name before 2.0.0); nothing uses it now:"
+    warn "    rm -r $(tilde "$TY_OLD_PREFIX")"
+}
+
+ty_install() {
     npm install --prefix "$TY_PREFIX" --no-fund --no-audit --loglevel=error \
         "typograf-cli@$TYPOGRAF_VERSION" >/dev/null || { warn "  FAILED — npm install typograf-cli"; return 1; }
     mkdir -p "$(dirname "$TY_LINK")"

@@ -67,6 +67,12 @@ the command for the system package manager and offers to run it: `apt-get`
 (Debian, Ubuntu), `dnf` or `yum` (RHEL, Fedora, CentOS), `brew` (macOS). That
 command needs `sudo` on Linux and runs only on a "yes" typed at the prompt.
 
+When a new skill version pins another `typograf-cli` version, a re-run of
+`install.sh` replaces the `typograf` it installed. This includes the copy that
+versions before 2.0.0 put into `~/.local/share/ru-tech-docs/typograf`. The
+installer does not delete that directory; it prints an `rm -r` command for it. A
+`typograf` installed some other way, for example with `npm -g`, stays as it is.
+
 The Node minimum is measured, not taken from the package: `typograf-cli` 6.2.1
 declares Node 14, but calls `import.meta.resolve()`, which 18.18 and 20.5 do not
 have. RHEL 8/9 and their clones ship Node 16 by default, so the installer picks

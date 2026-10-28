@@ -10,6 +10,19 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.6.5
+
+- **`install.sh` now updates the `typograf` it installed.** Before, any
+  `typograf` on `PATH` counted as done, so a change of `TYPOGRAF_VERSION` never
+  reached a machine that already had one. The copy under
+  `~/.local/share/ru-tech-docs/typograf`, from before 2.0.0, stayed there for
+  good. Now a re-run replaces a `typograf` that this script linked from either
+  prefix when its version differs from the pin, without asking. It then prints
+  the old prefix with an `rm -r` command and does not delete it. A `typograf`
+  from anywhere else, such as `npm -g`, is left alone, with a warning when its
+  version differs. Measured in a scratch `$HOME`: 6.1.0 in the old prefix and
+  6.2.0 in the new one both became 6.2.1; a foreign 7.0.0 stayed.
+
 ## 2.6.4
 
 - **An identifier with an `x` between digits is no longer corrupted.**
