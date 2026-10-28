@@ -32,6 +32,13 @@ has "edit: JSON for Claude Code" '"hookEventName": "PostToolUse"' "$(edit "$T/RE
 printf 'Windows не проверялась даже так.\n' > "$T/README.RU.md"
 has "edit: check 18" "check 18" "$(edit "$T/README.RU.md" 'Windows не проверялась даже так.')"
 
+# «молча» about a mechanism is a calque of "silently"; about a person it is Russian
+printf 'Ссылка на прежний якорь ломается молча.\n' > "$T/README.RU.md"
+has "edit: «ломается молча»" "calque of meaning" "$(edit "$T/README.RU.md" 'Ссылка на прежний якорь ломается молча.')"
+printf 'Оператор молча кивнул и закрыл тикет.\n' > "$T/README.RU.md"
+out="$(edit "$T/README.RU.md" 'Оператор молча кивнул и закрыл тикет.' | run)"
+case "$out" in *"calque of meaning"*) bad "edit: «молча кивнул» flagged" "$out" ;; *) ok ;; esac
+
 # a defect that was already in the file and is not in the edit stays out
 printf 'Как сказано выше, старое.\n\nНовая фраза без дефектов.\n' > "$T/README.RU.md"
 out="$(edit "$T/README.RU.md" 'Новая фраза без дефектов.' | run)"

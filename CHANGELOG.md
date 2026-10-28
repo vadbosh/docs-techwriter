@@ -10,6 +10,16 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.6.6
+
+- **«Ломается молча» is a calque, and the lexicon catches it now.** It is
+  *breaks silently* word for word. In Russian «молча» is said of a person who
+  could speak and does not, never of a link or a copy. A reader found it in this
+  skill's own `checks.md` and `patterns.md` and in its `kb/` notes; all now say
+  «незаметно». The meaning-calque table in `lexicon.md` has the row, and the
+  grep and the docs-check hook flag «молча» next to a verb of breaking, losing
+  or skipping. «Молча кивнул», said of a person, is not flagged; tests cover both.
+
 ## 2.6.5
 
 - **`install.sh` now updates the `typograf` it installed.** Before, any
