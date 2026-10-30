@@ -41,7 +41,7 @@ ALWAYS_OFF = ",".join("common/space/" + r for r in (
     ",ru/dash/to,ru/dash/kakto"
     # "host:port", "key:value", "arXiv:2409.14509" are not a missing space
     ",common/space/afterColon"
-    # resolve'ит → resolve’ит treats the wrong problem: the apostrophe ending is
+    # resolve'ит → resolve'ит treats the wrong problem: the apostrophe ending is
     # itself the defect (lexicon.md), and its grep looks for a straight '
     ",common/punctuation/apostrophe"
     # "59x7" inside an identifier is not a multiplication: this rule offered
@@ -50,8 +50,8 @@ ALWAYS_OFF = ",".join("common/space/" + r for r in (
     # version far more often than they are dimensions, and an identifier does
     # not have to sit in backticks to be one.
     ",common/number/times")
-MARK = "\ue000{}\ue001"   # private-use characters: typograf leaves them alone
-TOKEN = re.compile("\ue000(\\d+)\ue001")
+MARK = "{}"   # private-use characters: typograf leaves them alone
+TOKEN = re.compile("(\\d+)")
 INLINE = re.compile(
     r"`+[^`\n]*?`+"                       # inline code, any number of backticks
     r"|\]\([^)\s]*(?:\s+\"[^\"]*\")?\)"   # link target, with an optional title
@@ -126,7 +126,24 @@ def unmask(line, saved):
 
 
 def show(line):
-    return line.replace("\u00a0", "⍽")
+    return line.replace(" ", "⍽")
+
+
+def _run_typograf_batch(exe, input_json, locale, rules_off):
+    """Run typograf on a batch of paragraphs. Returns list of fixed paragraphs or None."""
+    try:
+        proc = subprocess.Popen(
+            [exe, "--stdin", "--stdin-filename", "paragraphs.json", "--no-color",
+             "-l", locale, "-d", rules_off],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout_bytes, stderr_bytes = proc.communicate(input=input_json.encode('utf-8'))
+        if proc.returncode != 0:
+            print(f"typograf failed: {stderr_bytes.decode('utf-8', errors='replace').strip()}", file=sys.stderr)
+            return None
+        return json.loads(stdout_bytes.decode('utf-8', errors='replace'))
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
+        print(f"typograf error: {exc}", file=sys.stderr)
+        return None
 
 
 def check(path, exe, rules_off, nbsp, locale="ru,en-US"):
@@ -138,7 +155,7 @@ def check(path, exe, rules_off, nbsp, locale="ru,en-US"):
     masked, saved = mask(text)
     # One paragraph per JSON string. typograf counts quote nesting across the
     # whole text it is given, so one unpaired quote early in a file turned every
-    # later «…» into „…“ (75 false lines on this skill's own pages). Strings of
+    # later «…» into „…" (75 false lines on this skill's own pages). Strings of
     # a JSON array are processed one by one — still one typograf call per file.
     paras, start = [], None
     for i, line in enumerate(masked + [""]):
@@ -147,40 +164,57 @@ def check(path, exe, rules_off, nbsp, locale="ru,en-US"):
         elif not line.strip() and start is not None:
             paras.append((start, i))
             start = None
+
+    fixed = list(masked)
     try:
-        run = subprocess.run(
-            [exe, "--stdin", "--stdin-filename", "paragraphs.json", "--no-color",
-             "-l", locale, "-d", rules_off],
-            input=json.dumps(["\n".join(masked[a:b]) for a, b in paras]),
-            capture_output=True, text=True)
+        input_json = json.dumps(["\n".join(masked[a:b]) for a, b in paras])
+        # Workaround for typograf bug: it truncates output at 64KB on large files.
+        # Process in batches if input is large enough to risk this issue.
+        if len(input_json) > 50000:
+            # Process in batches of 10 paragraphs to keep each call under 50KB
+            for batch_start in range(0, len(paras), 10):
+                batch_end = min(batch_start + 10, len(paras))
+                batch_paras = paras[batch_start:batch_end]
+                batch_input = json.dumps(["\n".join(masked[a:b]) for a, b in batch_paras])
+                out = _run_typograf_batch(exe, batch_input, locale, rules_off)
+                if out is None:
+                    return None
+                if len(out) != len(batch_paras):
+                    print(f"{path}: typograf output not comparable: {len(batch_paras)} paragraphs sent, {len(out)} returned", file=sys.stderr)
+                    return None
+                for (a, b), para in zip(batch_paras, out):
+                    lines = para.split("\n")
+                    if len(lines) != b - a:
+                        print(f"{path}: typograf output not comparable: line count of lines {a + 1}–{b} changed", file=sys.stderr)
+                        return None
+                    fixed[a:b] = lines
+        else:
+            # Small input: single call
+            out = _run_typograf_batch(exe, input_json, locale, rules_off)
+            if out is None:
+                return None
+            if len(out) != len(paras):
+                print(f"{path}: typograf output not comparable: {len(paras)} paragraphs sent, {len(out)} returned", file=sys.stderr)
+                return None
+            for (a, b), para in zip(paras, out):
+                lines = para.split("\n")
+                if len(lines) != b - a:
+                    print(f"{path}: typograf output not comparable: line count of lines {a + 1}–{b} changed", file=sys.stderr)
+                    return None
+                fixed[a:b] = lines
     except OSError as exc:
         print(f"{path}: cannot run {exe}: {exc}", file=sys.stderr)
         return None
-    if run.returncode != 0:
-        print(f"{path}: typograf failed: {run.stderr.strip()}", file=sys.stderr)
-        return None
-    fixed = list(masked)
-    try:
-        out = json.loads(run.stdout)
-        if len(out) != len(paras):   # zip(strict=True) is 3.10+; RHEL 9 has 3.9
-            raise ValueError(f"{len(paras)} paragraphs sent, {len(out)} returned")
-        for (a, b), para in zip(paras, out):
-            lines = para.split("\n")
-            if len(lines) != b - a:
-                raise ValueError(f"line count of lines {a + 1}–{b} changed")
-            fixed[a:b] = lines
-    except ValueError as exc:
-        print(f"{path}: typograf output not comparable: {exc}", file=sys.stderr)
-        return None
+
     hits = 0
     for n, (before, after) in enumerate(zip(masked, fixed), 1):
         if not nbsp:
             # Rules outside the nbsp group still insert U+00A0 (before a dash);
             # with nbsp off such a change is not a finding.
-            after = after.replace("\u00a0", " ")
+            after = after.replace(" ", " ")
         # typograf puts a space after "?" or ":" when a masked segment follows —
         # it cannot see that the segment is a closing "**" or a link.
-        for mo in re.finditer("([?!:;,.])(\ue000\\d+\ue001)", before):
+        for mo in re.finditer("([?!:;,.])(\\d+)", before):
             after = after.replace(mo.group(1) + " " + mo.group(2), mo.group(0))
         if before != after:
             hits += 1
