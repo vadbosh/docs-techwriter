@@ -10,6 +10,15 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.6.7
+
+- **`typograf_check.py`: fix 64KB output truncation on large files.** typograf
+  exits with incomplete output (exactly 65536 bytes) when processing JSON input
+  larger than ~50KB. This breaks JSON parsing and causes the script to fail on
+  large README files. Workaround: split input into batches of 10 paragraphs when
+  the input JSON exceeds 50KB. Each batch is processed separately and results
+  are merged.
+
 ## 2.6.6
 
 - **«Ломается молча» is a calque, and the lexicon catches it now.** It is
