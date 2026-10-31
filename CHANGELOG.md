@@ -10,6 +10,27 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.6.8
+
+- **`typograf_check.py` no longer fails on a document with a large output.**
+  On a 989-line `README.RU.md` it stopped with `UnicodeDecodeError: 'utf-8'
+  codec can't decode byte 0xd0`. The cause is the pipe. Through a pipe,
+  typograf-cli 6.2.1 stopped after 64 or 128 KB of output, often inside a
+  Cyrillic letter, and still exited 0. Sent to a file, the same output arrived
+  whole: 152,152 bytes, where the pipe gave 131,072. The script now sends the
+  output of typograf to a temporary file.
+
+  The fix in 2.6.7 did not work, and its entry names the wrong cause. It sent
+  the paragraphs to typograf ten at a time. Ten long paragraphs still give more
+  than 128 KB of output: a test file of ten 15 KB paragraphs failed with
+  `Unterminated string`. 2.6.8 removes the groups and keeps one typograf call
+  per file. A test now checks a document with more than 128 KB of output.
+
+- **A version number keeps its dot.** `typograf_check.py` proposed `Codex 0.16x`
+  as `Codex 0,16x`. The rule is `ru/number/comma`, now in `ALWAYS_OFF`. In the
+  same test it changed the version and left the fraction `3.5 рубля` alone. A
+  test covers `Codex 0.16x`.
+
 ## 2.6.7
 
 - **`typograf_check.py`: fix 64KB output truncation on large files.** typograf

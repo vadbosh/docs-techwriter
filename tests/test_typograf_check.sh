@@ -91,5 +91,15 @@ expect "digits around x are not a multiplication, en" 0 --lang en ident.html
 printf '<td>Запусти "скрипт" - сейчас.</td>\n' > "$T/td-bad.html"
 expect "prose in a td still checked" 1 td-bad.html
 
+# A version number keeps its dot.
+printf 'Codex 0.16x пишет разговор ещё раз.\n' > "$T/version.md"
+expect "version dot is not a decimal comma" 0 version.md
+
+# Output past 128 KB arrives whole: through a pipe it was cut off mid-letter.
+para="Проверка длинного абзаца на кириллице."
+for _ in $(seq 9); do para="$para $para"; done
+for _ in $(seq 10); do printf '%s\n\n' "$para"; done > "$T/big.md"
+expect "large output not cut off" 0 big.md
+
 echo "typograf_check: $pass passed, $fail failed"
 [ "$fail" -eq 0 ]
