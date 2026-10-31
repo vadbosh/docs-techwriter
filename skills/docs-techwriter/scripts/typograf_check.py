@@ -51,7 +51,7 @@ ALWAYS_OFF = ",".join("common/space/" + r for r in (
     # not have to sit in backticks to be one.
     ",common/number/times")
 MARK = "{}"   # private-use characters: typograf leaves them alone
-TOKEN = re.compile("(\\d+)")
+TOKEN = re.compile("\ue000(\\d+)\ue001")
 INLINE = re.compile(
     r"`+[^`\n]*?`+"                       # inline code, any number of backticks
     r"|\]\([^)\s]*(?:\s+\"[^\"]*\")?\)"   # link target, with an optional title
