@@ -115,3 +115,5 @@ __pycache__/
 .mypy_cache/
 .pytest_cache/
 # <<< ai-gitignore managed block <<<
+*.pyc
+__pycache__/
