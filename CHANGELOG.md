@@ -10,6 +10,24 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.6.9
+
+- **A task checkbox is no longer broken.** `typograf_check.py` proposed
+  `- [ ]` and `1. [ ]` as `- []` and `1. []`, which is no longer a checkbox.
+  The rule is `common/space/squareBracket`: it removes spaces inside square
+  brackets. The rule stays on, because `[ text ]` in prose is still worth
+  checking. Instead, `[ ]`, `[x]` or `[X]` right after a list marker is now
+  masked together with the marker. On a real `USER-GUIDE.md` the check went
+  from 14 lines to 0.
+
+- **Quotes next to a slash pair up.** `"сегодня"/"завтра"` came back as
+  `«сегодня"/"завтра»`. The rule `common/punctuation/quote` cannot tell an
+  opening quote from a closing one when no space separates it from the slash.
+  The script now puts spaces around such a slash before typograf runs and
+  removes them from the output. The proposal is now `«сегодня»/«завтра»`, and
+  `"today"/"tomorrow"/weekday` becomes `«today»/«tomorrow»/weekday`. Tests
+  cover both cases, and also `"src/".` at the end of a sentence.
+
 ## 2.6.8
 
 - **`typograf_check.py` no longer fails on a document with a large output.**

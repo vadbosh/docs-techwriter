@@ -91,6 +91,28 @@ expect "digits around x are not a multiplication, en" 0 --lang en ident.html
 printf '<td>Запусти "скрипт" - сейчас.</td>\n' > "$T/td-bad.html"
 expect "prose in a td still checked" 1 td-bad.html
 
+# A task checkbox after a list marker is syntax; brackets in prose are still checked.
+printf -- '- [ ] первый\n- [x] второй\n1. [ ] третий\n  - [ ] вложенный\n> - [ ] в цитате\n- [ ]\n' > "$T/tasks.md"
+expect "task checkboxes left alone" 0 tasks.md
+printf 'Значение [ в скобках ] посреди строки.\n' > "$T/brackets.md"
+expect "brackets in prose still checked" 1 brackets.md
+
+# Quotes on both sides of a slash pair up: they came back as «сегодня"/"завтра».
+printf 'Подпись: "сегодня"/"завтра" и время.\n' > "$T/slash.md"
+expect "quotes around a slash found" 1 slash.md
+if grep -qF '+ Подпись: «сегодня»/«завтра» и время.' "$T/out"; then pass=$((pass + 1)); else
+    fail=$((fail + 1)); echo "FAIL quotes around a slash paired"; sed 's/^/    /' "$T/out"; fi
+printf 'Ключ "today"/"tomorrow"/weekday, каталог "src/".\n' > "$T/slash-one.md"
+expect "quote against a slash on one side found" 1 slash-one.md
+if grep -qF '+ Ключ «today»/«tomorrow»/weekday, каталог «src/».' "$T/out"; then pass=$((pass + 1)); else
+    fail=$((fail + 1)); echo "FAIL quote against a slash on one side paired"; sed 's/^/    /' "$T/out"; fi
+printf 'Каталог "src/".\n' > "$T/slash-end.md"
+expect "slash before a closing quote found" 1 slash-end.md
+if grep -qF '+ Каталог «src/».' "$T/out"; then pass=$((pass + 1)); else
+    fail=$((fail + 1)); echo "FAIL slash before a closing quote paired"; sed 's/^/    /' "$T/out"; fi
+printf 'Подпись: «сегодня»/«завтра», путь a/b.\n' > "$T/slash-clean.md"
+expect "paired quotes around a slash left alone" 0 slash-clean.md
+
 # A version number keeps its dot.
 printf 'Codex 0.16x пишет разговор ещё раз.\n' > "$T/version.md"
 expect "version dot is not a decimal comma" 0 version.md

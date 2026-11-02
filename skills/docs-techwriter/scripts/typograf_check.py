@@ -56,6 +56,11 @@ ALWAYS_OFF = ",".join("common/space/" + r for r in (
     ",ru/number/comma")
 MARK = "\ue000{}\ue001"   # private-use characters: typograf leaves them alone
 TOKEN = re.compile("\ue000(\\d+)\ue001")
+# A quote pressed against a slash cannot be told open from close:
+# "сегодня"/"завтра" came back as «сегодня"/"завтра». Spaced, it pairs right.
+QUOTED_SLASH = re.compile('(?<=\\w")/(?=\\S)|(?<=\\S)/(?="\\w)')
+SLASH = " \ue002 "
+SLASH_BACK = re.compile("[ \u00a0]?\ue002[ \u00a0]?")
 INLINE = re.compile(
     r"`+[^`\n]*?`+"                       # inline code, any number of backticks
     r"|\]\([^)\s]*(?:\s+\"[^\"]*\")?\)"   # link target, with an optional title
@@ -114,7 +119,10 @@ def mask(text):
         if line.lstrip().startswith("|"):
             line = re.sub(r" {2,}", " ", line)
         # A list marker is syntax: typograf reads "- item" as direct speech.
-        lm = re.match(r"^(\s*(?:>\s*)*(?:(?:[-*+]|\d+[.)])\s+)?)", line)
+        # So is a task checkbox after it: common/space/squareBracket turns
+        # "- [ ]" into "- []", which is no longer a checkbox.
+        lm = re.match(
+            r"^(\s*(?:>\s*)*(?:(?:[-*+]|\d+[.)])\s+(?:\[[ xX]\](?:\s+|$))?)?)", line)
         lead = ""
         if lm:
             lead = MARK.format(len(saved))
@@ -158,7 +166,8 @@ def check(path, exe, rules_off, nbsp, locale="ru,en-US"):
             run = subprocess.run(
                 [exe, "--stdin", "--stdin-filename", "paragraphs.json", "--no-color",
                  "-l", locale, "-d", rules_off],
-                input=json.dumps(["\n".join(masked[a:b]) for a, b in paras]),
+                input=json.dumps([QUOTED_SLASH.sub(SLASH, "\n".join(masked[a:b]))
+                                  for a, b in paras]),
                 stdout=sink, stderr=subprocess.PIPE, text=True)
             sink.seek(0)
             stdout = sink.read().decode("utf-8")
@@ -174,7 +183,7 @@ def check(path, exe, rules_off, nbsp, locale="ru,en-US"):
         if len(out) != len(paras):   # zip(strict=True) is 3.10+; RHEL 9 has 3.9
             raise ValueError(f"{len(paras)} paragraphs sent, {len(out)} returned")
         for (a, b), para in zip(paras, out):
-            lines = para.split("\n")
+            lines = SLASH_BACK.sub("/", para).split("\n")
             if len(lines) != b - a:
                 raise ValueError(f"line count of lines {a + 1}–{b} changed")
             fixed[a:b] = lines
