@@ -10,6 +10,15 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.6.10
+
+- **The Opencode plugin says who installed it.** `plugins/opencode/docs-check.ts`
+  now starts with `// installed-by: docs-techwriter`, the same marker
+  `jira-write-guard.ts` of jira-op carries. A configuration tool that keeps
+  its own list of Opencode plugins reads this line to tell a plugin that a
+  repository installs from one copied by hand. Without it, that tool listed
+  `docs-check.ts` as a plugin missing from its list.
+
 ## 2.6.9
 
 - **A task checkbox is no longer broken.** `typograf_check.py` proposed
