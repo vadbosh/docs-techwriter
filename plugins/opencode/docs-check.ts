@@ -1,3 +1,4 @@
+// installed-by: docs-techwriter — /home/repos/docs-techwriter/install.sh, github.com/vadbosh/docs-techwriter
 import { spawn } from "node:child_process"
 import type { Plugin } from "@opencode-ai/plugin"
 
