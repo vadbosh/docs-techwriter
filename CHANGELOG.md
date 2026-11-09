@@ -10,6 +10,12 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.6.11
+
+- **`.gitignore`: the ai-gitignore block refreshed.** `CHANGE.md`,
+  `PREREQUISITES.md`, `*-skill/` and `tmp/` are ignored only at the root now,
+  and the duplicate `.codeium/` is gone. Nothing that ships changed.
+
 ## 2.6.10
 
 - **The Opencode plugin says who installed it.** `plugins/opencode/docs-check.ts`
