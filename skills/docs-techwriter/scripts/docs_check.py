@@ -212,7 +212,8 @@ def long_sentences(pl, wanted, limit):
     for para in paras:
         if not any(n in wanted for n, _ in para):
             continue
-        for s in re.split(r"(?<=[.!?])\s+", " ".join(l.strip() for _, l in para)):
+        # The full stop may sit inside closing markup: "**not a translation.** It"
+        for s in re.split(r"(?<=[.!?])[*_»”\")]*\s+", " ".join(l.strip() for _, l in para)):
             if len(s.split()) > limit:
                 hits.append((para[0][0], f"sentence of {len(s.split())} words: {s[:60]}…"))
     return hits

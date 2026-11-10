@@ -10,6 +10,18 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.7.1
+
+- **A full stop inside closing markup ends a sentence.** `docs_check.py`
+  counted `**a good Russian version is not a translation.** It is…` as one
+  sentence of 28 words: it split only where a space follows the stop. Now
+  `**`, `_`, `»`, `”`, `"` and `)` may stand between the two. A test covers it.
+
+- **The README says less per sentence.** The first check of both READMEs by
+  hand, with `docs_check.py README.md README.RU.md`, gave 10 sentences over 25
+  words in the English one. Nine are now split; the tenth was the false count
+  above. Both READMEs said the skill has one Python script; it has two.
+
 ## 2.7.0
 
 - **`docs_check.py` checks a file by hand.** The hook sees only edits made by

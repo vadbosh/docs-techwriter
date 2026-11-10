@@ -124,6 +124,13 @@ printf '# tool\n\nRun `in_order_to --approximately` first.\n' > "$T/README.md"
 out="$(edit "$T/README.md" 'Run `in_order_to --approximately` first.' | run)"
 case "$out" in *"STE100 dictionary"*) bad "STE100 dictionary: inline code is not prose" "$out" ;; *) ok ;; esac
 
+# a full stop inside closing markup still ends the sentence: two of 13 and 15
+# words, not one of 28
+s='For Russian, the one principle: **a good Russian version is not a translation.** It is the same content stated the way a Russian technical writer would state it.'
+printf '# t\n\n%s\n' "$s" > "$T/README.md"
+out="$(edit "$T/README.md" "$s" | run)"
+case "$out" in *"sentence of"*) bad "sentence ends inside **…**" "$out" ;; *) ok ;; esac
+
 # garbage on stdin never breaks the edit
 out="$(printf 'not json' | run)"; rc=$?
 [ "$rc" -eq 0 ] && [ -z "$out" ] && ok || bad "garbage input: exit 0, no output" "rc=$rc $out"

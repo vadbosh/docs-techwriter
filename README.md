@@ -1,6 +1,6 @@
 # docs-techwriter
 
-A skill for AI coding assistants (Claude Code, Opencode, Codex) that writes and
+A skill for AI coding assistants: Claude Code, Opencode, Codex. It writes and
 reviews technical documentation in English and Russian — README, manuals, CLI
 help, release notes, changelogs. Three kinds of work: an English document on its
 own, the Russian version of an English one, and a Russian document with no
@@ -63,8 +63,9 @@ the venue and test the meaning of each paragraph. Then run the English rules in
 `typograf-cli` is the one external program. `install.sh` offers it on a terminal
 and installs it into `~/.local/share/docs-techwriter/typograf`, linked as
 `~/.local/bin/typograf` — `npm --prefix`, no `sudo`. Without Node.js it prints
-the command for the system package manager and offers to run it: `apt-get`
-(Debian, Ubuntu), `dnf` or `yum` (RHEL, Fedora, CentOS), `brew` (macOS). That
+the command for the system package manager and offers to run it. The command
+uses `apt-get` (Debian, Ubuntu), `dnf` or `yum` (RHEL, Fedora, CentOS), or
+`brew` (macOS). That
 command needs `sudo` on Linux and runs only on a "yes" typed at the prompt.
 
 When a new skill version pins another `typograf-cli` version, a re-run of
@@ -88,21 +89,21 @@ the installer has run only in a simulation. Windows was not planned for and has
 not been tried, neither on a real machine nor in a simulation. The installer is
 a bash script. Under Git Bash or Cygwin it skips `typograf`; whether it installs
 the skill and the rule there has not been checked. The skill itself is Markdown
-and one Python script, so on Windows it can be tried by copying
-`skills/docs-techwriter/` into the assistant's skills directory by hand. The
+and two Python scripts. On Windows, try it by copying `skills/docs-techwriter/`
+into the assistant's skills directory by hand. The
 trigger rule then has to be wired by hand as well.
 
 ### macOS: the expected path
 
-Nobody has run the installer on a Mac. This path is read from `install.sh`, and
-part of it was simulated on Linux: in the `bash:3.2` image, with `uname`
+Nobody has run the installer on a Mac. This path is read from `install.sh`.
+Part of it was simulated on Linux: in the `bash:3.2` image, with `uname`
 answering `Darwin` and a stand-in `brew` that only logs its arguments.
 
 Why 3.2: it is still the system `/bin/bash` of current macOS — `3.2.57` on
 macOS Tahoe 26.4.1 in May 2026 (github.com/nitefood/asn/issues/108). Apple
 keeps it because later bash is GPLv3, and made zsh the default shell instead.
 The installer starts with `#!/usr/bin/env bash`, so a Homebrew bash 5 that
-comes first in `PATH` runs it instead; that case is the one tested on Linux.
+comes first in `PATH` runs it instead. That case is the one tested on Linux.
 
 1. The skill is copied into each assistant directory found. In the simulation
    the copy went through.
@@ -128,10 +129,10 @@ git clone <this repository> && cd docs-techwriter
 `install.sh` copies the skill into every assistant it finds (`~/.claude/skills`,
 `~/.config/opencode/skills`, `~/.codex/skills`) and installs the trigger rule
 `rules/docs-techwriter-trigger.md` beside it. Without the rule the skill loads
-only when asked by name: documentation is usually written in the middle of other
-work, which never matches the skill's description on its own. Opencode and Codex
-read a rule only when their config points at it, so the installer adds the entry
-to `opencode.json` `instructions[]` and the `@`-reference to
+only when asked by name. Documentation is usually written in the middle of
+other work, and such a request does not match the skill's description. Opencode
+and Codex read a rule only when their config points at it. So the installer
+adds the entry to `opencode.json` `instructions[]` and the `@`-reference to
 `~/.codex/AGENTS.md`. A file it is about to change is backed up first.
 
 `--no-rule` installs the skill alone. `--skills-dir D` installs the skill into
@@ -145,11 +146,12 @@ The rule loads the skill, but it does not make the model run the checks. So
 `install.sh` also installs a hook. After each edit of a document, the hook runs
 `scripts/docs_check.py` on the lines that edit wrote and returns the findings to
 the model at once. The checks are 16–18, the calques and канцелярит of the
-lexicon, the word lists of `en-side.md`, sentence length, ASD-STE100 hints for
-English text, and typography when `typograf-cli` is installed. A defect that was already in the file is not
-reported again. At the end the hook always asks the model to read the changed
-paragraphs against `patterns.md`: no word search finds a paragraph that says
-the wrong thing or that nobody needs.
+lexicon, and the word lists of `en-side.md`. Then come sentence length,
+ASD-STE100 hints for English text, and typography when `typograf-cli` is
+installed. A defect that was already in the file is not reported again. At the
+end the hook always asks the model to read the changed paragraphs against
+`patterns.md`. No word search finds a paragraph that says the wrong thing, or
+one that nobody needs.
 
 The hook treats as a document `README*.md`, `CHANGELOG*.md`, `*.RU.md`,
 `*.en.md`, any `.md` under `docs/`, and any `.md` with Russian text. It never
