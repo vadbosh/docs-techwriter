@@ -128,5 +128,27 @@ case "$out" in *"STE100 dictionary"*) bad "STE100 dictionary: inline code is not
 out="$(printf 'not json' | run)"; rc=$?
 [ "$rc" -eq 0 ] && [ -z "$out" ] && ok || bad "garbage input: exit 0, no output" "rc=$rc $out"
 
+# By hand: file paths, no JSON.
+byhand() {  # name, expected exit, expected text, files...
+    local name="$1" want="$2" text="$3" out rc; shift 3
+    out="$(timeout 5 python3 "$C" "$@" 2>&1 </dev/null)"; rc=$?
+    if [ "$rc" -eq "$want" ] && [[ "$out" == *"$text"* ]]; then ok; else bad "$name" "rc=$rc $out"; fi
+}
+printf 'Начало.\n\nКак сказано выше, установщик ставит всё сам.\n' > "$T/hand.RU.md"
+printf 'Обычный абзац без ошибок.\n' > "$T/clean.RU.md"
+printf 'x = 1\n' > "$T/code.py"
+byhand "by hand: a defect found, exit 1" 1 "check 16" "$T/hand.RU.md"
+byhand "by hand: the whole file is checked" 1 "lines 1–4 checked" "$T/hand.RU.md"
+byhand "by hand: a clean file, exit 0" 0 "found nothing" "$T/clean.RU.md"
+byhand "by hand: not documentation is said, not silent" 0 "not checked" "$T/code.py"
+byhand "by hand: a missing file, exit 2" 2 "cannot read" "$T/missing.md"
+# stdin left open, as in an assistant's shell: reading it for JSON used to wait forever
+out="$(sleep 3 | timeout 2 python3 "$C" "$T/hand.RU.md" 2>&1)"; rc=$?
+if [ "$rc" -eq 1 ]; then ok; else bad "by hand, stdin open: no wait" "rc=$rc $out"; fi
+if command -v script >/dev/null 2>&1; then
+    out="$(script -qec "timeout 5 python3 '$C'" /dev/null 2>&1)"; rc=$?
+    if [ "$rc" -eq 2 ] && [[ "$out" == *usage* ]]; then ok; else bad "no file, a terminal on stdin: usage, exit 2" "rc=$rc $out"; fi
+fi
+
 echo "docs_check: $pass passed, $fail failed"
 [ "$fail" -eq 0 ]

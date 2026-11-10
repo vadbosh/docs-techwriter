@@ -17,6 +17,13 @@ nobody needs) are not visible to a grep.
 Exit status is always 0: the hook informs, it never blocks an edit. Output:
 the JSON Claude Code and Codex read as additionalContext, or plain text with
 --text. Nothing is printed for a file that is not documentation.
+
+By hand, for a file edited past the hook — with sed, a script, another editor:
+
+    docs_check.py FILE...
+
+checks every line of each file and prints plain text. Exit 0 nothing found,
+1 something found, 2 a file missing or unreadable.
 """
 import json
 import os
@@ -296,12 +303,13 @@ def check(path, written):
     return lang, wanted, sorted(set(hits))
 
 
-def report(path, lang, wanted, hits):
+def report(path, lang, wanted, hits, verb="written"):
     name = path.replace(os.path.expanduser("~"), "~", 1)
     span = f"{min(wanted)}–{max(wanted)}" if len(wanted) > 1 else str(min(wanted))
-    head = f"[docs-check] {name}, line{'s' if len(wanted) > 1 else ''} {span} written"
+    head = f"[docs-check] {name}, line{'s' if len(wanted) > 1 else ''} {span} {verb}"
     pages = "patterns.md 4, 7, 9, 10, 17" if lang == "ru" else "en-side.md, its structures table"
-    tail = (f"Now read the changed paragraphs against {pages}: greps do not see "
+    which = "changed paragraphs" if verb == "written" else "paragraphs"
+    tail = (f"Now read the {which} against {pages}: greps do not see "
             "meaning, a pointer left hanging, or a paragraph nobody needs.")
     if not hits:
         return f"{head}: the docs-techwriter greps found nothing. {tail}"
@@ -309,8 +317,36 @@ def report(path, lang, wanted, hits):
     return f"{head}; docs-techwriter found:\n{body}\n{tail}"
 
 
+def check_files(paths):
+    status = 0
+    for path in paths:
+        try:
+            text = open(path, encoding="utf-8").read()
+        except (OSError, UnicodeDecodeError) as exc:
+            print(f"{path}: cannot read: {exc}", file=sys.stderr)
+            status = 2
+            continue
+        # Said aloud: by hand, silence would read as "nothing found".
+        if not is_doc(path, text):
+            print(f"{path}: not checked — not documentation by the hook's rules")
+            continue
+        res = check(path, None)
+        if res is None:
+            print(f"{path}: not checked — no text")
+            continue
+        print(report(path, *res, verb="checked"))
+        if res[2] and status == 0:
+            status = 1
+    return status
+
+
 def main(argv):
     text_mode = "--text" in argv
+    # A terminal on stdin is a person who meant a file; json.load would wait.
+    if sys.stdin.isatty():
+        print("usage: docs_check.py FILE...   (the hook passes JSON on stdin)",
+              file=sys.stderr)
+        return 2
     try:
         data = json.load(sys.stdin)
     except ValueError:
@@ -332,6 +368,9 @@ def main(argv):
 
 
 if __name__ == "__main__":
+    files = [a for a in sys.argv[1:] if not a.startswith("--")]
+    if files:
+        sys.exit(check_files(files))
     try:
         sys.exit(main(sys.argv[1:]))
     except Exception:          # the hook informs; it must never break an edit

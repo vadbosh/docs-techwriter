@@ -10,6 +10,20 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.7.0
+
+- **`docs_check.py` checks a file by hand.** The hook sees only edits made by
+  the assistant's edit tools, so a document changed with `sed` or a script went
+  unchecked, and nothing said how to check it. Called with a file path,
+  `docs_check.py` ignored the path and read stdin for hook JSON. In an
+  assistant's shell, where stdin stays open, it waited until it was killed.
+  With stdin closed, it printed nothing and exited 0, which reads as a clean
+  file. Now `docs_check.py FILE…` checks every line of each file and prints
+  plain text. It exits 1 when it finds something, 0 when it finds nothing, and
+  2 when a file cannot be read. A file that is not documentation is named as
+  not checked. With no file and a terminal on stdin, it prints its usage
+  instead of waiting. The README and `SKILL.md` give the command.
+
 ## 2.6.11
 
 - **`.gitignore`: the ai-gitignore block refreshed.** `CHANGE.md`,

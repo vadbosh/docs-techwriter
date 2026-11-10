@@ -154,7 +154,16 @@ the wrong thing or that nobody needs.
 The hook treats as a document `README*.md`, `CHANGELOG*.md`, `*.RU.md`,
 `*.en.md`, any `.md` under `docs/`, and any `.md` with Russian text. It never
 blocks an edit. It sees only edits made by the assistant's edit tools; an edit
-made with `sed` or a script goes past it.
+made with `sed` or a script goes past it. Check such a file by hand:
+
+```bash
+python3 ~/.claude/skills/docs-techwriter/scripts/docs_check.py README.md
+```
+
+Run this way, the script checks every line of the file, not only the changed
+ones. It exits with 1 when it finds something and with 0 when it finds
+nothing. Codex and Opencode have the same script under `~/.codex/skills/` and
+`~/.config/opencode/skills/`.
 
 | Assistant | Installed as |
 |---|---|

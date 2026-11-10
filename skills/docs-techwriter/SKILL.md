@@ -1,7 +1,7 @@
 ---
 name: docs-techwriter
 description: Write and review technical documentation in Russian and English — README, manuals, CLI help, release notes, changelogs. Covers the English original itself, its Russian version, and a document written in Russian from the start. Use when asked to "переведи доку", "сделай RU версию", "translate the README to Russian", "write the README", "review the docs", when writing Russian and English docs side by side, or when reviewing either version for calques, unreadable constructions and drift between the two. Covers the Russian lexicon that must not be transliterated, the English structures that have no Russian equivalent, the English style rules for a reader whose first language is not English, and the mechanical checks for both.
-version: "2.6.11"
+version: "2.7.0"
 ---
 
 # Technical documentation in Russian and English
@@ -112,6 +112,8 @@ the ASD-STE100 hints for English and typography, on the lines that edit wrote. T
 3 and 5 for those lines, never step 4 — the line it ends with, asking for the
 reading pass, is an instruction, not boilerplate. It sees only edits made with
 the assistant's edit tools; prose edited with `sed` or a script goes unchecked.
+For such a file run `python3 scripts/docs_check.py FILE…` by hand: it checks
+every line and exits 1 when it finds something.
 
 **Writing Russian with no English source.** The same skill applies to an original
 Russian document — a manual, a runbook, an RCA written in Russian from the start.
