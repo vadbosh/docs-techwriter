@@ -10,6 +10,15 @@ without leaving git.
 
 A tag is not edited afterwards. Anything needing correction later belongs here.
 
+## 2.7.2
+
+- **An English page under `docs/` is checked when given by a relative path.**
+  `docs_check.py docs/details.md` from a project answered "not checked — not
+  documentation by the hook's rules": the `/docs/` test needed a leading slash,
+  which only an absolute path has. The hook passed absolute paths and never
+  hit it; a check by hand from the project skipped every English `docs/` page
+  without a word. The path is made absolute first. A test covers it.
+
 ## 2.7.1
 
 - **A full stop inside closing markup ends a sentence.** `docs_check.py`

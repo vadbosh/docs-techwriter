@@ -149,6 +149,11 @@ byhand "by hand: the whole file is checked" 1 "lines 1–4 checked" "$T/hand.RU.
 byhand "by hand: a clean file, exit 0" 0 "found nothing" "$T/clean.RU.md"
 byhand "by hand: not documentation is said, not silent" 0 "not checked" "$T/code.py"
 byhand "by hand: a missing file, exit 2" 2 "cannot read" "$T/missing.md"
+# an English page under docs/, given by a relative path from the project: it is
+# documentation, not "not checked" (the /docs/ test once needed a leading slash)
+mkdir -p "$T/proj/docs"; printf 'As mentioned above, it installs everything.\n' > "$T/proj/docs/guide.md"
+out="$(cd "$T/proj" && timeout 5 python3 "$C" docs/guide.md 2>&1 </dev/null)"; rc=$?
+if [ "$rc" -eq 1 ] && [[ "$out" == *"check 16"* ]]; then ok; else bad "by hand: docs/x.md by a relative path is checked" "rc=$rc $out"; fi
 # stdin left open, as in an assistant's shell: reading it for JSON used to wait forever
 out="$(sleep 3 | timeout 2 python3 "$C" "$T/hand.RU.md" 2>&1)"; rc=$?
 if [ "$rc" -eq 1 ]; then ok; else bad "by hand, stdin open: no wait" "rc=$rc $out"; fi

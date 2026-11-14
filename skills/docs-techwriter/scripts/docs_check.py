@@ -132,6 +132,9 @@ def language(text):
 
 
 def is_doc(path, text):
+    # Relative by hand ("docs/x.md" from the project), absolute from the hook:
+    # the "/docs/" test needs the leading slash either way.
+    path = os.path.abspath(path)
     base = os.path.basename(path)
     if not base.endswith(".md") or base.startswith("review-") or "/.git/" in path:
         return False
